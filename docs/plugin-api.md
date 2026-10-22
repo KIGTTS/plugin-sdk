@@ -194,4 +194,4 @@ MESSAGE 用于完成提醒，PROGRESS 用于持续进度（progress/progressMax/
 Android16+ PROGRESS 且 ongoing=true 时可设置live=true申请实况展示；最终外观由系统、厂商及用户设置决定，旧版降级为标准进度通知。结束应更新为MESSAGE且ongoing=false、live=false。快捷入口不申请实况。支持symbol设置离线Material Symbol小图标，通知内容跟随系统亮暗色。
 ## API21 语音包参数
 
-VoicePackInfo.parameters声明语音包自己的数值参数：id/title/value/min/max/defaultValue/steps/suffix；不包含服务统一语速。语音合成服务用原生滑条展示，通过SpeechBroker.command UPDATE_PARAMETERS传packId及value中的JSON数值对象；引擎须校验整份补丁、仅修改指定包、保存并用于实际合成。保持包更新、导出和重启后的设置。未声明参数的旧包不展示空参数入口；旧构造器、copy和缺省JSON继续兼容。主题合同v4包含应用实际49角色色板与同亮暗模式下的更新事件。
+VoicePackInfo.parameters声明语音包自己的数值参数：id/title/value/min/max/defaultValue/steps/suffix；不包含服务统一语速。语音合成服务用原生滑条展示，通过SpeechBroker.command UPDATE_PARAMETERS传packId及value中的JSON数值对象；引擎须校验整份补丁、仅修改指定包、保存并用于实际合成。保持包更新、导出和重启后的设置。未声明参数的旧包不展示空参数入口；旧构造器、copy和缺省JSON继续兼容。主题合同v4包含应用实际48角色色板与同亮暗模式下的更新事件。
