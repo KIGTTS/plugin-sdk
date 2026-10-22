@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 14
+const val PLUGIN_API_VERSION = 15
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
