@@ -158,3 +158,9 @@ API15新增以下可选元数据，新编译包必须标API15；API9–14既有�
 PluginPage.loading 只控制插件通用标题栏的加载环，不锁定页面按钮或改变列表几何。用uiChanges通知宿主重新读取快照；后台任务完成或失败时必须恢复false。refreshAction在普通页面/管理列表/商店目录列表顶端开放下拉更新及无障碍更新动作，后台loading或操作繁忙时不重复派发。指示器跟随下拉，松手后收回，持续进度由标题栏展示。浏览器、聊天和源码编辑器仍由各自界面管理手势。
 
 页面读取不得启动网络。插件应在execute里启动后台工作并合并重复请求，保留旧内容，失败后仍可重试。API9–15构造、默认参数入口及copy桥保持可用；旧JSON字段默认loading=false、refreshAction=null。新编译包标API16，避免旧宿主误装。
+
+## API17 字幕渲染器
+
+`PluginOutcome.SetSubtitleRenderer(root, mainPage="index.html")` 为当前会话安装本地文字字幕渲染器；`root=null` 只关闭调用插件自身的渲染器。根目录必须归调用方所有，主文件必须是根内现有文件。宿主不替换原文、不创建媒体条目，编辑时仍使用原生输入框；媒体/网页快捷文本沿原展示规则。
+
+网页定义 `window.KigttsSubtitle.update({text, placeholder, fontSizePercent})`，宿主在文档就绪及内容变化时更新，禁止通过重载网页刷新字幕。主题沿宿主网页协议传入；渲染器无互联网、设备或应用控制桥。停用、卸载或工作进程失效时清理会话渲染器；重新启动不自动打开。使用该结果的插件声明API17，已有API9–16包继续兼容。

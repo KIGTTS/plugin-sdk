@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 16
+const val PLUGIN_API_VERSION = 17
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -62,6 +62,12 @@ sealed interface PluginOutcome {
     data class EndRecognition(val submit: Boolean = false) : PluginOutcome
     @Serializable
     data class PresentContent(val content: SubtitleContent) : PluginOutcome
+    /** Session-only local renderer for TEXT subtitles; null disables this plugin's renderer.
+     * Receives window.KigttsSubtitle.update({text, placeholder, fontSizePercent}) without reloading.
+     * Does not replace the editable document or present a media quick text. No network access.
+     */
+    @Serializable
+    data class SetSubtitleRenderer(val root: PluginResource? = null, val mainPage: String = "index.html") : PluginOutcome
     @Serializable
     data class SelectTtsService(val pluginId: String) : PluginOutcome
     @Serializable
