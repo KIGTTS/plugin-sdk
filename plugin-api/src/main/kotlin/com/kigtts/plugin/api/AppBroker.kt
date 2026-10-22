@@ -8,6 +8,9 @@ import kotlinx.serialization.json.JsonObject
 interface AppBroker { suspend fun request(command: AppCommand): AppReply }
 
 @Serializable sealed interface AppCommand {
+    /** Registration never adds an entrance; request-add always needs a user tap. */
+    @Serializable @SerialName("overlay") data class Overlay(val operation: String = "status",
+        val shortcut: OverlayEntrance? = null, val bubble: OverlayBubble? = null, val id: String? = null) : AppCommand
     /** Caller-owned notification lifecycle. Posting requests declared notifications + Android grants. */
     @Serializable @SerialName("notifications") data class Notifications(val operation: String = "status",
         val notification: PluginNotification? = null, val id: String? = null) : AppCommand

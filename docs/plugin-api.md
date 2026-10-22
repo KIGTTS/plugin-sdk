@@ -1,6 +1,6 @@
-# 插件 API v16（兼容 v9–15）
+# 插件 API v22（兼容 v9–21）
 
-当前 SDK 为 API16，宿主接受API9–16签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API22，宿主接受API9–22签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
 
@@ -197,3 +197,7 @@ Android16+ PROGRESS 且 ongoing=true 时可设置live=true申请实况展示；�
 VoicePackInfo.parameters声明语音包自己的数值参数：id/title/value/min/max/defaultValue/steps/suffix；不包含服务统一语速。语音合成服务用原生滑条展示，通过SpeechBroker.command UPDATE_PARAMETERS传packId及value中的JSON数值对象；引擎须校验整份补丁、仅修改指定包、保存并用于实际合成。保持包更新、导出和重启后的设置。未声明参数的旧包不展示空参数入口；旧构造器、copy和缺省JSON继续兼容。主题合同v4包含应用实际48角色色板与同亮暗模式下的更新事件。
 
 API21 PageBlock.Slider复用PluginControl.Slider，在分组卡片中直接显示数值。宿主拖动期间只更新本地，松手提交value十进制字符串，避免工作进程busy刷新打断手势；弹窗仍使用PluginOutcome.Controls。
+
+## API22 主软件悬浮窗
+
+声明 overlay 权限与用途，通过 AppCommand.Overlay 调用 status、register、request-add、bubble、clear-bubble。OverlayEntrance 的 actionId/pageId 二选一；注册只提供候选，request-add 必须经原生用户确认才写入入口。完全访问不能绕过这项确认。OverlayBubble 只允许原生文字与可选图标按钮，时长2–30秒；不能开启主软件悬浮开关或代为批准系统权限。调用方和发布者身份由宿主绑定，停用插件会移除候选和气泡。
