@@ -8,6 +8,9 @@ import kotlinx.serialization.json.JsonObject
 interface AppBroker { suspend fun request(command: AppCommand): AppReply }
 
 @Serializable sealed interface AppCommand {
+    /** Caller-owned notification lifecycle. Posting requests declared notifications + Android grants. */
+    @Serializable @SerialName("notifications") data class Notifications(val operation: String = "status",
+        val notification: PluginNotification? = null, val id: String? = null) : AppCommand
     /** Native symbol catalog and caller-scoped SVG rendering / durable icon imports. */
     @Serializable @SerialName("ui-assets") data class UiAssets(val operation: String, val source: PluginResource? = null,
         val destination: String? = null, val query: String = "", val offset: Int = 0, val size: Int = 256) : AppCommand

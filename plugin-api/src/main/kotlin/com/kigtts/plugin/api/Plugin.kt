@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 19
+const val PLUGIN_API_VERSION = 20
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -48,7 +48,9 @@ data class PluginContext(val editorText: String, val transcript: String, val lis
     val recognitionServiceId: String? = null, val locale: String = "zh-CN")
 
 @Serializable
-enum class HostCommand { TOGGLE_LISTENING, CLOSE_LISTENING_PANEL, USE_STREAMING, USE_BATCH, VOICE_INPUT, TOGGLE_SUBTITLE_FULLSCREEN }
+enum class HostCommand { TOGGLE_LISTENING, CLOSE_LISTENING_PANEL, USE_STREAMING, USE_BATCH, VOICE_INPUT, TOGGLE_SUBTITLE_FULLSCREEN,
+    /** Show the secondary panel without starting the microphone or changing recognition state. */
+    OPEN_LISTENING_PANEL }
 
 @Serializable
 sealed interface PluginOutcome {
@@ -77,6 +79,14 @@ sealed interface PluginOutcome {
      */
     @Serializable
     data class SetSubtitleRenderer(val root: PluginResource? = null, val mainPage: String = "index.html") : PluginOutcome
+    /** Session-only secondary panel owned by this plugin. Null restores this owner's native panel.
+     * pageId resolves through page(); Browser and native blocks share normal permissions/actions.
+     * replaceContent=false overlays the original captions. replaceControls filters bottom slots
+     * to this owner and hides native font controls. The host keeps its resize/dismiss affordance.
+     */
+    @Serializable
+    data class SetListeningPanel(val pageId: String? = null, val replaceContent: Boolean = true,
+        val replaceControls: Boolean = true) : PluginOutcome
     @Serializable
     data class SelectTtsService(val pluginId: String) : PluginOutcome
     @Serializable

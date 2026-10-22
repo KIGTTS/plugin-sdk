@@ -180,3 +180,15 @@ PluginPage.loading 只控制插件通用标题栏的加载环，不锁定页面�
 `PluginOutcome.Controls(title, controls, resetActionId)` 提供内部滚动的原生设置面板。`PluginControl.Slider`用于连续数值或带steps的档位；`Toggle`为开关；`Choice`通过SEGMENTED或SELECT选择按钮组或下拉选择器；`Color`使用宿主HSV/HEX取色器，值为无符号ARGB Long。它们都带title/actionId，变更调用execute并通过inputs["value"]传回十进制浮点数、true/false、选项ID或ARGB十进制Long。宿主合并高频滑条输入并串行提交，最终值不因worker繁忙而丢失。返回NoAction保留面板；返回Controls刷新全部初值。重置动作没有value。
 
 字幕渲染器铺满相纸/字幕卡片背景；update.safeArea的top/right/bottom/left为CSS像素，已经换算设备密度，文字灯珠应避让此区域，背景仍铺满。renderer.json可选keepScreenOn、followSystemBrightness、screenBrightness（0.1–1）、quickSwipeOpensQuickText；仅在该渲染器可见时生效，离开或停用恢复原窗口亮度及常亮状态。快速左滑打开现有快捷文本面板，关闭时保留主界面侧滑操作。
+## API20 聆听副面板
+
+`SetListeningPanel(pageId, replaceContent=true, replaceControls=true)`在当前会话选择本插件的page()页面作为聆听区副面板，null只恢复自己的原生面板。replaceContent=false可覆盖原字幕（网页背景可透明）；replaceControls=true过滤原生/其它插件聆听按钮，仅显示当前插件的LISTENING_BOTTOM_START/END贡献，页面内部也可自定义按钮。原生拖动与关闭操作保留。原生PageBlock和Browser均复用现有样式、资源归属、动作白名单和联网/设备授权；页面不能冒用其它插件资源或抢占软件顶栏。
+
+`HostAction(OPEN_LISTENING_PANEL)`仅显示面板，不启动麦克风；关闭使用原有CLOSE_LISTENING_PANEL。只读host.listeningPanel为当前面板owner。网页声明window.KigttsListening.update(data)或监听kigtts-listening，收到transcript/listening/visible/fontSize增量，更新不会重载网页；主题、亮暗、安全区与普通插件浏览器一致。页面不存在、停用、卸载或worker换代恢复原生区域；重启不自动开启。使用新结果/命令的插件标API20，已发布API9–19包继续兼容。
+## API20 插件通知
+
+包声明 `notifications` 并填写 permissionPurposes。`AppCommand.Notifications("post", PluginNotification(...))` 发送或更新同 id 通知；`cancel` 携带 id 删除，`cancel-all` 仅清理本插件；`status` 只读系统通知开关。实际发送先检查本插件授权，再申请 Android 13+ POST_NOTIFICATIONS；后台不会新弹权限框。通知不依赖 app-control，Agent完全访问不能代替系统/插件通知授权。
+
+MESSAGE 用于完成提醒，PROGRESS 用于持续进度（progress/progressMax/indeterminate），SHORTCUT 用于字幕与软件快捷入口；每类独立系统频道。通知最多3个动作、每插件最多8条；contentAction/actions 可打开本插件pageId、触发本插件actionId、显示phraseId，或 target=home/quick-text/cards/sketch。路由由宿主生成随机令牌并绑定发布者，不能写任意Intent或其它插件ID。停用/卸载清理本插件通知，更新相同id不会反复响铃。
+
+Android16+ PROGRESS 且 ongoing=true 时可设置live=true申请实况展示；最终外观由系统、厂商及用户设置决定，旧版降级为标准进度通知。结束应更新为MESSAGE且ongoing=false、live=false。快捷入口不申请实况。支持symbol设置离线Material Symbol小图标，通知内容跟随系统亮暗色。

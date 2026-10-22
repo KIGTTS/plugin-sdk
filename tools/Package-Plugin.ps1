@@ -97,6 +97,18 @@ foreach ($module in $Modules) {
         $hashes[$relative] = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     }
     $spec['files'] = $hashes
+    if ($spec.icon) {
+        $icon = $spec.icon
+        if ([bool]$icon.symbol -eq [bool]$icon.path) { throw 'Choose one package icon: symbol or path' }
+        if ($icon.symbol -and $icon.symbol -cnotmatch '^[a-z][a-z0-9_]{0,79}$') { throw 'Invalid Material Symbol name' }
+        if ($icon.path) {
+            if ($icon.path -notmatch '^assets/[^\\:]+\.(svg|png|jpe?g|webp)$' -or
+                @($icon.path -split '/' | Where-Object { $_ -in @('', '.', '..') }).Count -gt 0 -or
+                -not $hashes.Contains($icon.path)) { throw 'Icon must be a signed SVG/PNG/JPEG/WebP asset inside the package' }
+            $iconFile = Get-Item -LiteralPath (Join-Path $payload $icon.path)
+            if ($iconFile.Length -lt 1 -or $iconFile.Length -gt 1048576) { throw 'Package icon must be at most 1 MiB' }
+        }
+    }
     $raw = $utf8.GetBytes(($spec | ConvertTo-Json -Depth 12 -Compress))
     [IO.File]::WriteAllBytes((Join-Path $payload 'plugin.json'), $raw)
     $signatureRoot = Join-Path $payload 'signature'

@@ -109,3 +109,7 @@ SenseVoice 可导入 ONNX+tokens.txt 或二者 ZIP，包括嵌套资源包。7z�
 API2/3 SenseVoice 使用官方固定模型提交 `2365baeacb507f821a0c8120fcee3d484dba7a07`，model SHA-256 `c71f0ce00bec95b07744e116345e33d8cbbe08cef896382cf907bf4b51a2cd51` 与 zh.wav：[模型来源](https://huggingface.co/csukuangfj/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17)。当时完整识别含初次加载约 1823 ms；模型/tokens/LICENSE 在插件 models，不在主 APK 或 Git。现场麦克风、嘈杂环境、精度与长期会话需独立验证。
 
 历史检查修复 ART 自动生成 code/oat 的加载校验以及管道 AIDL 复制误报；当前仍拒绝额外 DEX，使用显式 END_INPUT，缺失结束帧视为输入中断。PluginRuntimeDeviceTest、SpeechServiceDeviceTest 与 StreamingRecognitionDeviceTest 在 androidTest 中，测试资源应放对应插件 Appdata，模型存在且实际执行后才可报告成功。测试资产仅进入 AndroidTest APK。安装/签名/数据保留与真实播放的最新结果集中记录，避免将旧 smoke 结果代替新功能验收。
+
+## 安装器图标
+
+在 `plugin-spec.json` 注册 `"icon": {"symbol":"lightbulb"}`，使用离线 Material Symbols Rounded；或注册 `"icon": {"path":"assets/icon.svg"}`，使用包内 SVG、PNG、JPEG、WebP 图片。两者二选一，图片上限 1 MiB，必须位于 assets 且纳入 files 哈希清单与包签名。SVG 仅使用本地矢量路径/渐变，不允许脚本、外部图片/字体或外部引用；位图解码限制像素数。安装器读取图标无需加载插件代码或申请网络权限。旧包未声明 icon 时继续使用 plugin-info.json 的 symbol 或类别图标。
