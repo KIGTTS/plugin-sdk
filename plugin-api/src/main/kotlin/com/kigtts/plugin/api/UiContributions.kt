@@ -61,7 +61,15 @@ data class ManagedPackage(val id: String, val version: String, val kind: String 
         ManagedPackage(id, version, kind, enabled, name, permissions, permissionPurposes, manageAction, enableAction, removeAction, error)
 }
 @Serializable
-enum class PluginGesture { QUICK_TEXT_LONG_PRESS }
+enum class PluginGesture {
+    QUICK_TEXT_LONG_PRESS,
+    /** Single-finger stroke on the inactive TEXT subtitle surface, before text editing.
+     * inputs: gesture.points = [[x,y],...] JSON, gesture.durationMs, gesture.width, gesture.height.
+     * Bounded to 512 local pixel points; coordinates already respect subtitle rotation.
+     * The foreground host ignores taps, long presses, pinch and child-owned gestures.
+     */
+    SUBTITLE_STROKE,
+}
 @Serializable
 data class GestureAction(val id: String, val label: String, val gesture: PluginGesture)
 @Serializable

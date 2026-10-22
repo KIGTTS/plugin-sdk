@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 17
+const val PLUGIN_API_VERSION = 18
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -48,10 +48,19 @@ data class PluginContext(val editorText: String, val transcript: String, val lis
     val recognitionServiceId: String? = null, val locale: String = "zh-CN")
 
 @Serializable
-enum class HostCommand { TOGGLE_LISTENING, CLOSE_LISTENING_PANEL, USE_STREAMING, USE_BATCH, VOICE_INPUT }
+enum class HostCommand { TOGGLE_LISTENING, CLOSE_LISTENING_PANEL, USE_STREAMING, USE_BATCH, VOICE_INPUT, TOGGLE_SUBTITLE_FULLSCREEN }
 
 @Serializable
 sealed interface PluginOutcome {
+    /** Recognized foreground gesture or explicit user action selects an existing quick text by ID.
+     * The host re-resolves the entry and uses its normal send path (including media and reading).
+     * Requires the plugin's quick-text-read grant; never caches a copy of a deleted entry.
+     */
+    @Serializable
+    data class SendQuickText(val entryId: String) : PluginOutcome
+    /** A sampled gesture did not match; no navigation, message or UI invalidation. */
+    @Serializable
+    data object NoAction : PluginOutcome
     /** Inspect a downloaded package and ask the user to trust its publisher in native host UI. */
     @Serializable
     data class InstallPackage(val resource: PluginResource, val allowDowngrade: Boolean = false,
