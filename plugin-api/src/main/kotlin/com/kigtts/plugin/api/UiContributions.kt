@@ -77,8 +77,6 @@ data class PluginContributions(
 )
 
 @Serializable
-data class PluginPage(val id: String, val title: String, val blocks: List<PageBlock>, val management: ManagementList? = null)
-@Serializable
 data class PageAction(val id: String, val label: String, val icon: PluginIcon = PluginIcon.INFO, val symbol: String? = null) {
     constructor(id: String, label: String, icon: PluginIcon = PluginIcon.INFO) : this(id, label, icon, null)
     fun copy(id: String = this.id, label: String = this.label, icon: PluginIcon = this.icon): PageAction = PageAction(id, label, icon, symbol)
@@ -151,7 +149,12 @@ sealed interface PageBlock {
     @Serializable
     data class Actions(val actions: List<PageAction>) : PageBlock
     @Serializable
-    data class Group(val title: String, val children: List<PageBlock>) : PageBlock
+    data class Group(val title: String, val children: List<PageBlock>, val collapsible: Boolean = false,
+        val initiallyExpanded: Boolean = false) : PageBlock {
+        constructor(title: String, children: List<PageBlock>) : this(title, children, false, false)
+        fun copy(title: String = this.title, children: List<PageBlock> = this.children): Group =
+            Group(title, children, collapsible, initiallyExpanded)
+    }
 }
 
 @Serializable

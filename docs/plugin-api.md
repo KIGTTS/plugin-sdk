@@ -146,3 +146,7 @@ Chat支持图片资源、thinking/hasReasoning、稳定position、持久队列�
 `PageBlock.Markdown(text, images)` 渲染GFM文本，图片只能从插件预先准备的本地PluginResource映射读取；不执行HTML或自动下载外图。`PageBlock.Gallery` 提供最多8张预览。源展示资源合同见 [KPM](https://github.com/LHT02/KIGTTSNEXT/blob/36e4d8fbb1a199009c01c95ae65f4e97b1759e81/docs/package-store.md)。
 
 `CardLayerKind.PHOTO_INFO` 表示相纸备注下方的左对齐附加信息，最多8项、imageId为空；不参与贴纸拖动。全部字段在备注下方以带图标的单行显示，预览和静态/动态导出共用测量。原生日期/时间/日期时间/地点/天气分别使用每卡唯一的`photo-info.date`、`photo-info.time`、`photo-info.date_time`、`photo-info.location`、`photo-info.weather`图层ID，开关替换同类项；插件可保留这些ID维持字段类型，其他PHOTO_INFO使用通用信息图标。读取后编辑卡片时保留这类图层，不改变SDK14构造或序列化合同。
+
+## 可选页面展示元数据
+
+`PluginPage.header`以ManagementItem提供无操作的详情图标、标题与简介，图片优先、Material Symbols回退。`onEnterAction`由支持它的宿主在页面真正可见且动作空闲时每次进入调用一次；快照读取、UI刷新和重组不会触发，插件应快速启动后台任务并合并重复请求。`PageBlock.Group(collapsible=true)`默认折叠，宿主保留展开状态并显示展开箭头，可用initiallyExpanded改变初始值。字段均为可选，保留原JVM构造/copy桥和旧JSON兼容；旧宿主会忽略这些新展示字段。

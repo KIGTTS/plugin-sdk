@@ -86,6 +86,13 @@ internal fun validateSnapshot(snapshot: PluginSnapshot) {
     }
     snapshot.pages.forEach { page ->
         require(page.id.length in 1..128 && page.title.length in 1..160)
+        page.onEnterAction?.let { require(it.length in 1..128) }
+        page.header?.let {
+            symbol(it.symbol)
+            require(it.id.length in 1..128 && it.title.length in 1..160 && it.subtitle.length <= 1000)
+            require(it.primaryAction == null && it.actions.isEmpty() && it.toggle == null)
+            it.image?.let { image -> require(image.path.length in 1..512) }
+        }
         page.management?.items?.forEach { symbol(it.symbol) }
         blocks(page.blocks, 0)
     }
