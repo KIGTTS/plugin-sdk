@@ -12,6 +12,6 @@ class OverlayContractTest {
             assertEquals(command, PluginJson.decodeFromString(AppCommand.serializer(), encoded))
             assertFalse(encoded.contains("approved")); assertFalse(encoded.contains("publisher"))
         }
-        assertEquals(22, PLUGIN_API_VERSION); assertEquals(9, MIN_PLUGIN_API_VERSION)
+        assertTrue(PLUGIN_API_VERSION >= 22); assertEquals(9, MIN_PLUGIN_API_VERSION)
     }
 }

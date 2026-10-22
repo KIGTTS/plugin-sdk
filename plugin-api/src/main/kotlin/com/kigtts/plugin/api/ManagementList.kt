@@ -28,16 +28,31 @@ data class ManagementItem(val id: String, val title: String, val subtitle: Strin
 
 @Serializable
 data class ManagementFilter(val id: String, val label: String, val action: String, val selected: Boolean = false)
+/** A host-themed inline action. A progress value renders a cancellable ring; null is indeterminate. */
+@Serializable
+data class ManagementProgressAction(val label: String, val action: String? = null,
+    val progress: Float? = null, val running: Boolean = false) {
+    init { require(label.length in 1..80 && (action == null || action.length in 1..240))
+        require(progress == null || progress.isFinite() && progress in 0f..1f) }
+}
 @Serializable enum class ManagementListStyle { STANDARD, CATALOG }
 @Serializable
 data class ManagementList(val id: String, val items: List<ManagementItem>,
     val reorderAction: String? = null, val emptyText: String = "暂无条目", val filters: List<ManagementFilter> = emptyList(),
-    val style: ManagementListStyle = ManagementListStyle.STANDARD) {
+    val style: ManagementListStyle = ManagementListStyle.STANDARD,
+    val itemActions: Map<String, ManagementProgressAction> = emptyMap()) {
+    constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目",
+        filters: List<ManagementFilter> = emptyList(), style: ManagementListStyle = ManagementListStyle.STANDARD)
+        : this(id, items, reorderAction, emptyText, filters, style, emptyMap())
     constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目", filters: List<ManagementFilter> = emptyList())
         : this(id, items, reorderAction, emptyText, filters, ManagementListStyle.STANDARD)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
-        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style)
-    init { require(items.size <= 1000 && items.map { it.id }.distinct().size == items.size) }
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions)
+    fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
+        style: ManagementListStyle = this.style): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions)
+    init { require(items.size <= 1000 && items.map { it.id }.distinct().size == items.size)
+        require(itemActions.size <= 1000 && itemActions.keys.all { key -> items.any { it.id == key } }) }
 }
 
 /** Keeps installed/new entries deterministic while retaining a saved order for returning IDs. */

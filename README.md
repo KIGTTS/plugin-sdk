@@ -11,3 +11,7 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 插件以固定SDK子模块开发，可独立构建，不依赖主软件仓库。正式插件必须保留自己的许可证和第三方NOTICE；SDK的MIT许可不会替换插件许可。签名私钥属于发布者，不进入源码或发行包。
 
 [接口](docs/plugin-api.md) · [插件包](docs/plugin-packages.md) · [权限](docs/plugin-permissions.md) · [网页UI](docs/web-ui.md)
+
+## API23 · 行内操作与下载进度
+
+`ManagementList.itemActions` 为指定条目提供宿主主题按钮；`ManagementProgressAction` 支持文案、操作、确定或不确定进度环。按钮独立于条目详情点击，进度区保留稳定触控空间。旧 ManagementList 构造和 copy 方法保持兼容。
