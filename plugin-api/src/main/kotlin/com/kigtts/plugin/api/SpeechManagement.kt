@@ -22,6 +22,7 @@ data class VoicePackMetadata(val name: String, val remark: String = "", val pinn
 data class VoicePackInfo(val id: String, val metadata: VoicePackMetadata, val voiceIds: List<String>,
     val avatarPath: String? = null, val editable: Boolean = false, val exportable: Boolean = false, val deletable: Boolean = false,
     val parameters: List<VoiceParameter> = emptyList()) {
+    init { require(parameters.size <= 32 && parameters.map { it.id }.distinct().size == parameters.size) }
     // Preserve installed API9-20 constructors/default masks and copy methods.
     constructor(id: String, metadata: VoicePackMetadata, voiceIds: List<String>, avatarPath: String? = null,
         editable: Boolean = false, exportable: Boolean = false, deletable: Boolean = false)

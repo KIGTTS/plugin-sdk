@@ -16,4 +16,13 @@ class VoiceParameterCompatibilityTest {
         assertEquals(listOf(parameter), current.copy(metadata = VoicePackMetadata("改名")).parameters)
         assertEquals(current, PluginJson.decodeFromString<VoicePackInfo>(PluginJson.encodeToString(current)))
     }
+    @Test fun inlineParametersRoundTripAndValidateFiniteRanges() {
+        val block: PageBlock = PageBlock.Slider(PluginControl.Slider("语速", "rate", 1f, .25f, 4f, suffix = "×"))
+        assertEquals(block, PluginJson.decodeFromString<PageBlock>(PluginJson.encodeToString(block)))
+        PluginSnapshot(PluginDescriptor("test.audio", "声音", ""), PluginContributions(), listOf(PluginPage("settings", "设置", listOf(block))))
+        assertTrue(runCatching { VoiceParameter("gain", "音量", Float.NaN, 0f, 2f, 1f) }.isFailure)
+        val bad = PageBlock.Slider(PluginControl.Slider("坏参数", "bad", 9f, 0f, 2f))
+        assertTrue(runCatching { PluginSnapshot(PluginDescriptor("test.audio", "声音", ""), PluginContributions(),
+            listOf(PluginPage("settings", "设置", listOf(bad)))) }.isFailure)
+    }
 }

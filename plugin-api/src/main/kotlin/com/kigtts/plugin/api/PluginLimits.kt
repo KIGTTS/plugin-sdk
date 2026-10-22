@@ -31,6 +31,11 @@ internal fun validateSnapshot(snapshot: PluginSnapshot) {
         for (block in items) {
             require(++count <= 1000)
             when (block) {
+                is PageBlock.Slider -> {
+                    val c = block.control
+                    require(c.title.length in 1..160 && c.actionId.length in 1..128)
+                    require(c.min.isFinite() && c.max.isFinite() && c.min < c.max && c.value.isFinite() && c.value in c.min..c.max && c.steps in 0..1000)
+                }
                 is PageBlock.Browser -> {
                     require((block.root != null) != (block.url != null))
                     require(block.mainPage.length in 1..240 && block.mainPage.split('/').none { it == ".." || it == "." || it.isBlank() })

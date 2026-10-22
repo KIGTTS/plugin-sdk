@@ -93,6 +93,9 @@ data class PageAction(val id: String, val label: String, val icon: PluginIcon = 
 /** A plugin can build a new page without depending on Compose or an Activity. */
 @Serializable
 sealed interface PageBlock {
+    /** Inline numeric setting; host commits a decimal value when the drag finishes. */
+    @Serializable
+    data class Slider(val control: PluginControl.Slider) : PageBlock
     /** Full-page sandboxed WebView. Local root belongs to this plugin; remote pages have no native bridge. */
     @Serializable
     data class Browser(val root: PluginResource? = null, val mainPage: String = "index.html", val url: String? = null,
