@@ -13,7 +13,7 @@ class SubtitleContentTest {
             assertEquals(renderer, PluginJson.decodeFromString<PluginOutcome>(wire))
         }
         assertEquals(9, MIN_PLUGIN_API_VERSION)
-        assertEquals(18, PLUGIN_API_VERSION)
+        assertEquals(19, PLUGIN_API_VERSION)
     }
     @Test fun foregroundGestureCommandsRoundTripAndOldEnumsRemainAvailable() {
         val results = listOf(PluginOutcome.SendQuickText("existing-entry"), PluginOutcome.NoAction,

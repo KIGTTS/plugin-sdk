@@ -174,3 +174,9 @@ PluginPage.loading 只控制插件通用标题栏的加载环，不锁定页面�
 
 使用这些接口的包声明API18；已有API9–17包继续兼容。插件自行保存绑定ID并监听词条删除，不应保存待发送的内容副本或按同名词条自动重绑。
 宿主在 `PluginContext.inputs["host.subtitleRenderer"]` 提供当前渲染器所属插件ID，未启用时为空字符串；该宿主字段覆盖动作输入中的同名值。插件据此生成开关标签/图标并判断切换方向，避免渲染回退或宿主会话重建后依赖进程内布尔值而出现第一次点击无效。
+
+## API19 原生控件弹窗
+
+`PluginOutcome.Controls(title, controls, resetActionId)` 提供内部滚动的原生设置面板。`PluginControl.Slider`用于连续数值或带steps的档位；`Toggle`为开关；`Choice`通过SEGMENTED或SELECT选择按钮组或下拉选择器；`Color`使用宿主HSV/HEX取色器，值为无符号ARGB Long。它们都带title/actionId，变更调用execute并通过inputs["value"]传回十进制浮点数、true/false、选项ID或ARGB十进制Long。宿主合并高频滑条输入并串行提交，最终值不因worker繁忙而丢失。返回NoAction保留面板；返回Controls刷新全部初值。重置动作没有value。
+
+字幕渲染器铺满相纸/字幕卡片背景；update.safeArea的top/right/bottom/left为CSS像素，已经换算设备密度，文字灯珠应避让此区域，背景仍铺满。renderer.json可选keepScreenOn、followSystemBrightness、screenBrightness（0.1–1）、quickSwipeOpensQuickText；仅在该渲染器可见时生效，离开或停用恢复原窗口亮度及常亮状态。快速左滑打开现有快捷文本面板，关闭时保留主界面侧滑操作。

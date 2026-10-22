@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 18
+const val PLUGIN_API_VERSION = 19
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -97,6 +97,11 @@ sealed interface PluginOutcome {
     data class Dialog(val title: String, val text: String) : PluginOutcome
     @Serializable
     data class Menu(val title: String, val items: List<PageAction>) : PluginOutcome
+    /** Native, internally scrolling settings. Changes call actionId with inputs["value"].
+     * Returning NoAction keeps the panel open; returning Controls replaces its values.
+     */
+    @Serializable
+    data class Controls(val title: String, val controls: List<PluginControl>, val resetActionId: String? = null) : PluginOutcome
     /** A real native confirmation, with actions in the dialog footer rather than a menu body. */
     @Serializable
     data class Confirm(val title: String, val text: String, val action: PageAction, val cancelLabel: String = "取消") : PluginOutcome
