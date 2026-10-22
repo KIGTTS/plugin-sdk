@@ -164,4 +164,13 @@ PluginPage.loading 只控制插件通用标题栏的加载环，不锁定页面�
 `PluginOutcome.SetSubtitleRenderer(root, mainPage="index.html")` 为当前会话安装本地文字字幕渲染器；`root=null` 只关闭调用插件自身的渲染器。根目录必须归调用方所有，主文件必须是根内现有文件。宿主不替换原文、不创建媒体条目，编辑时仍使用原生输入框；媒体/网页快捷文本沿原展示规则。
 
 网页定义 `window.KigttsSubtitle.update({text, placeholder, fontSizePercent})`，宿主在文档就绪及内容变化时更新，禁止通过重载网页刷新字幕。主题沿宿主网页协议传入；渲染器无互联网、设备或应用控制桥。停用、卸载或工作进程失效时清理会话渲染器；重新启动不自动打开。使用该结果的插件声明API17，已有API9–16包继续兼容。
+
+## API18 字幕控制与绘制手势
+
+- `HostAction(TOGGLE_SUBTITLE_FULLSCREEN)` 切换字幕全屏。只读输入 `host.subtitleFullscreen` 为 `true` / `false`，同名动作参数无法覆盖宿主值。
+- 渲染根目录可选 `renderer.json`（UTF-8 JSON 对象，最多4KiB）。宿主监听原子替换并通过 `KigttsSubtitle.update` 的可选 `settings` 对象即时通知原页面，不重载、不清空字幕。建议临时文件写完后原子替换；旧版渲染器可忽略该字段。
+- `GestureAction(..., SUBTITLE_STROKE)` 仅在前台文字字幕启用单笔采样。动作输入包含 `gesture.points`（JSON `[[x,y],...]`，最多512点）、`gesture.durationMs`、`gesture.width`、`gesture.height`，坐标以旋转后的字幕局部像素为单位。点按、长按、双指仍由宿主处理；活跃绘制区域优先接收单指划动。
+- `SendQuickText(entryId)` 按当前库中的既有ID发送，宿主重新解析词条并检查 `quick-text-read` 授权，随后复用点击词条的展示/播放逻辑。删除的ID不发送旧内容。`NoAction` 用于忽略无法识别或不适用的手势，不显示通知。
+
+使用这些接口的包声明API18；已有API9–17包继续兼容。插件自行保存绑定ID并监听词条删除，不应保存待发送的内容副本或按同名词条自动重绑。
 宿主在 `PluginContext.inputs["host.subtitleRenderer"]` 提供当前渲染器所属插件ID，未启用时为空字符串；该宿主字段覆盖动作输入中的同名值。插件据此生成开关标签/图标并判断切换方向，避免渲染回退或宿主会话重建后依赖进程内布尔值而出现第一次点击无效。
