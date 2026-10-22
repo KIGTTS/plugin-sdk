@@ -1,6 +1,6 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API20兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API21兼容范围由接口及宿主共同校验，管理桥独立版本化。
 
 ```powershell
 git clone https://github.com/KIGTTS/plugin-sdk.git
