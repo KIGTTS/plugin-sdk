@@ -1,6 +1,6 @@
-# 插件 API v14（兼容 v9–13）
+# 插件 API v16（兼容 v9–15）
 
-当前 SDK 为 API15，宿主接受API9–15签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API16，宿主接受API9–16签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
 
@@ -152,3 +152,9 @@ Chat支持图片资源、thinking/hasReasoning、稳定position、持久队列�
 API15新增以下可选元数据，新编译包必须标API15；API9–14既有包的JVM入口继续保留。
 
 `PluginPage.header`以ManagementItem提供无操作的详情图标、标题与简介，图片优先、Material Symbols回退。`onEnterAction`由支持它的宿主在页面真正可见且动作空闲时每次进入调用一次；快照读取、UI刷新和重组不会触发，插件应快速启动后台任务并合并重复请求。`PageBlock.Group(collapsible=true)`默认折叠，宿主保留展开状态并显示展开箭头，可用initiallyExpanded改变初始值。字段均为可选，保留原JVM构造/copy桥和旧JSON兼容；旧JSON读取仍能使用原字段默认值。
+
+## 后台加载与下拉更新（API16）
+
+PluginPage.loading 只控制插件通用标题栏的加载环，不锁定页面按钮或改变列表几何。用uiChanges通知宿主重新读取快照；后台任务完成或失败时必须恢复false。refreshAction在普通页面/管理列表/商店目录列表顶端开放下拉更新及无障碍更新动作，后台loading或操作繁忙时不重复派发。指示器跟随下拉，松手后收回，持续进度由标题栏展示。浏览器、聊天和源码编辑器仍由各自界面管理手势。
+
+页面读取不得启动网络。插件应在execute里启动后台工作并合并重复请求，保留旧内容，失败后仍可重试。API9–15构造、默认参数入口及copy桥保持可用；旧JSON字段默认loading=false、refreshAction=null。新编译包标API16，避免旧宿主误装。
