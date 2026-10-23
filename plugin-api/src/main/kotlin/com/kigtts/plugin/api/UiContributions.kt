@@ -28,13 +28,21 @@ data class UiAction(
     val buttonStyle: UiButtonStyle = UiButtonStyle.ICON,
     val busy: Boolean = false,
     val symbol: String? = null,
+    val badge: PluginBadge? = null,
 ) {
+    constructor(id: String, label: String, slot: UiSlot, icon: PluginIcon = PluginIcon.INFO,
+        presentation: UiPresentation = UiPresentation.BUTTON, order: Int = 0, buttonStyle: UiButtonStyle = UiButtonStyle.ICON,
+        busy: Boolean = false, symbol: String? = null) : this(id, label, slot, icon, presentation, order, buttonStyle, busy, symbol, null)
     constructor(id: String, label: String, slot: UiSlot, icon: PluginIcon = PluginIcon.INFO,
         presentation: UiPresentation = UiPresentation.BUTTON, order: Int = 0, buttonStyle: UiButtonStyle = UiButtonStyle.ICON)
         : this(id, label, slot, icon, presentation, order, buttonStyle, false)
     fun copy(id: String = this.id, label: String = this.label, slot: UiSlot = this.slot,
         icon: PluginIcon = this.icon, presentation: UiPresentation = this.presentation, order: Int = this.order,
-        buttonStyle: UiButtonStyle = this.buttonStyle): UiAction = UiAction(id, label, slot, icon, presentation, order, buttonStyle, busy, symbol)
+        buttonStyle: UiButtonStyle = this.buttonStyle): UiAction = UiAction(id, label, slot, icon, presentation, order, buttonStyle, busy, symbol, badge)
+    fun copy(id: String = this.id, label: String = this.label, slot: UiSlot = this.slot,
+        icon: PluginIcon = this.icon, presentation: UiPresentation = this.presentation, order: Int = this.order,
+        buttonStyle: UiButtonStyle = this.buttonStyle, busy: Boolean = this.busy, symbol: String? = this.symbol): UiAction =
+        UiAction(id, label, slot, icon, presentation, order, buttonStyle, busy, symbol, badge)
 }
 
 /** Configuration entries are routed through Settings > Plugins instead of the feature drawer. */
@@ -45,11 +53,16 @@ data class DrawerEntry(val id: String, val label: String, val pageId: String, va
 @Serializable
 data class SettingsEntry(val id: String, val label: String, val pageId: String,
     val icon: PluginIcon = PluginIcon.SETTINGS, val cardId: String = "extensions",
-    val cardTitle: String = "功能与扩展", val summary: String = "", val order: Int = 0, val symbol: String? = null) {
+    val cardTitle: String = "功能与扩展", val summary: String = "", val order: Int = 0, val symbol: String? = null,
+    val badge: PluginBadge? = null) {
+    constructor(id: String, label: String, pageId: String, icon: PluginIcon = PluginIcon.SETTINGS, cardId: String = "extensions", cardTitle: String = "功能与扩展", summary: String = "", order: Int = 0, symbol: String? = null)
+        : this(id, label, pageId, icon, cardId, cardTitle, summary, order, symbol, null)
     constructor(id: String, label: String, pageId: String, icon: PluginIcon = PluginIcon.SETTINGS, cardId: String = "extensions", cardTitle: String = "功能与扩展", summary: String = "", order: Int = 0)
         : this(id, label, pageId, icon, cardId, cardTitle, summary, order, null)
     fun copy(id: String = this.id, label: String = this.label, pageId: String = this.pageId, icon: PluginIcon = this.icon, cardId: String = this.cardId, cardTitle: String = this.cardTitle, summary: String = this.summary, order: Int = this.order): SettingsEntry =
-        SettingsEntry(id, label, pageId, icon, cardId, cardTitle, summary, order, symbol)
+        SettingsEntry(id, label, pageId, icon, cardId, cardTitle, summary, order, symbol, badge)
+    fun copy(id: String = this.id, label: String = this.label, pageId: String = this.pageId, icon: PluginIcon = this.icon, cardId: String = this.cardId, cardTitle: String = this.cardTitle, summary: String = this.summary, order: Int = this.order, symbol: String? = this.symbol): SettingsEntry =
+        SettingsEntry(id, label, pageId, icon, cardId, cardTitle, summary, order, symbol, badge)
 }
 /** Source runtimes expose actual installed/approved projects to dependency resolution. Drafts are excluded. */
 @Serializable
@@ -85,9 +98,12 @@ data class PluginContributions(
 )
 
 @Serializable
-data class PageAction(val id: String, val label: String, val icon: PluginIcon = PluginIcon.INFO, val symbol: String? = null) {
+data class PageAction(val id: String, val label: String, val icon: PluginIcon = PluginIcon.INFO, val symbol: String? = null,
+    val badge: PluginBadge? = null) {
+    constructor(id: String, label: String, icon: PluginIcon = PluginIcon.INFO, symbol: String? = null) : this(id, label, icon, symbol, null)
     constructor(id: String, label: String, icon: PluginIcon = PluginIcon.INFO) : this(id, label, icon, null)
-    fun copy(id: String = this.id, label: String = this.label, icon: PluginIcon = this.icon): PageAction = PageAction(id, label, icon, symbol)
+    fun copy(id: String = this.id, label: String = this.label, icon: PluginIcon = this.icon): PageAction = PageAction(id, label, icon, symbol, badge)
+    fun copy(id: String = this.id, label: String = this.label, icon: PluginIcon = this.icon, symbol: String? = this.symbol): PageAction = PageAction(id, label, icon, symbol, badge)
 }
 
 /** A plugin can build a new page without depending on Compose or an Activity. */

@@ -25,3 +25,9 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 目录列表可通过 `ManagementList.shortcuts` 在顶部声明宫格入口，`filters` 显示主题色 Tab。`loadMore` 提供到达列表末尾时调用的动作；追加条目后更新动作标识，加载完毕后设为 null。宿主保留现有列表和滚动位置，每个标识仅自动调用一次。旧构造器、默认掩码和 copy 入口继续保留。
 
 API25 展示：`SetSubtitleRenderer.presentation` 接受 `PanelPresentation(fullscreenBackground = 0xff000000L, fadeControlsWhenIdle = true)`；外围色为 ARGB，仅全屏使用。`SetListeningPanel.fadeControlsWhenIdle` 同样支持闲置按钮淡化。宿主保留安全区、触摸与键盘可恢复按钮，默认约6秒后淡化并遵守系统无障碍超时。旧请求默认保持原样。
+
+## API26 · 图标提醒气泡
+
+`UiAction.badge`、`PageAction.badge`、`SettingsEntry.badge` 共用 `PluginBadge`。设为 `null` 隐藏；`PluginBadge()` 显示圆点；`PluginBadge(count = 8, description = "8 个插件可更新")` 显示数字，超过 99 由宿主显示 `99+`。数量必须大于 0；没有待处理项目时传 `null`。
+
+`tone` 支持 `BadgeTone.THEME`（主题色）、`WARNING`（错误/警告色）和 `CAUTION`（黄色，适合待审核）。`description` 是给无障碍服务的完整说明，数字缩写不影响读屏。插件通过 `uiChanges` 更新贡献快照；不要为了刷新气泡重新加载插件或重建页面。状态由插件管理，宿主不会代为清除提醒。旧构造器、默认参数与 copy 入口保持兼容。
