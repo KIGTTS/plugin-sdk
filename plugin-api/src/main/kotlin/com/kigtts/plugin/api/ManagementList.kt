@@ -9,12 +9,20 @@ data class PluginResource(val path: String, val pluginId: String? = null)
 /** Rendered by the host; plugins supply data and commands, never Compose or their own styles. */
 @Serializable
 data class ManagementToggle(val checked: Boolean, val action: String)
+/** A radio control separate from opening a row or invoking its secondary actions. */
+@Serializable
+data class ManagementSelection(val action: String, val enabled: Boolean = true)
 @Serializable
 data class ManagementItem(val id: String, val title: String, val subtitle: String = "",
     val icon: PluginIcon = PluginIcon.INFO, val image: PluginResource? = null,
     val selected: Boolean = false, val pinned: Boolean = false, val group: String = "",
     val primaryAction: String? = null, val actions: List<PageAction> = emptyList(), val toggle: ManagementToggle? = null,
-    val symbol: String? = null) {
+    val symbol: String? = null, val badges: List<String> = emptyList(), val selection: ManagementSelection? = null) {
+    // Keep the API14–23 constructor/copy (including Kotlin default masks) callable by signed packages.
+    constructor(id: String, title: String, subtitle: String = "", icon: PluginIcon = PluginIcon.INFO, image: PluginResource? = null,
+        selected: Boolean = false, pinned: Boolean = false, group: String = "", primaryAction: String? = null,
+        actions: List<PageAction> = emptyList(), toggle: ManagementToggle? = null, symbol: String? = null)
+        : this(id, title, subtitle, icon, image, selected, pinned, group, primaryAction, actions, toggle, symbol, emptyList(), null)
     // Preserve API9–13 JVM constructors and copy masks for already signed packages.
     constructor(id: String, title: String, subtitle: String = "", icon: PluginIcon = PluginIcon.INFO, image: PluginResource? = null,
         selected: Boolean = false, pinned: Boolean = false, group: String = "", primaryAction: String? = null,
@@ -23,7 +31,13 @@ data class ManagementItem(val id: String, val title: String, val subtitle: Strin
     fun copy(id: String = this.id, title: String = this.title, subtitle: String = this.subtitle, icon: PluginIcon = this.icon,
         image: PluginResource? = this.image, selected: Boolean = this.selected, pinned: Boolean = this.pinned, group: String = this.group,
         primaryAction: String? = this.primaryAction, actions: List<PageAction> = this.actions, toggle: ManagementToggle? = this.toggle): ManagementItem =
-        ManagementItem(id, title, subtitle, icon, image, selected, pinned, group, primaryAction, actions, toggle, symbol)
+        ManagementItem(id, title, subtitle, icon, image, selected, pinned, group, primaryAction, actions, toggle, symbol, badges, selection)
+    fun copy(id: String = this.id, title: String = this.title, subtitle: String = this.subtitle, icon: PluginIcon = this.icon,
+        image: PluginResource? = this.image, selected: Boolean = this.selected, pinned: Boolean = this.pinned, group: String = this.group,
+        primaryAction: String? = this.primaryAction, actions: List<PageAction> = this.actions, toggle: ManagementToggle? = this.toggle,
+        symbol: String? = this.symbol): ManagementItem =
+        ManagementItem(id, title, subtitle, icon, image, selected, pinned, group, primaryAction, actions, toggle, symbol, badges, selection)
+    init { require(badges.size <= 4 && badges.all { it.isNotBlank() && it.length <= 32 }) }
 }
 
 @Serializable

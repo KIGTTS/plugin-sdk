@@ -1,6 +1,6 @@
-# 插件 API v22（兼容 v9–21）
+# 插件 API v24（兼容 v9–23）
 
-当前 SDK 为 API22，宿主接受API9–22签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API24，宿主接受API9–24签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
 
@@ -201,3 +201,7 @@ API21 PageBlock.Slider复用PluginControl.Slider，在分组卡片中直接显�
 ## API22 主软件悬浮窗
 
 声明 overlay 权限与用途，通过 AppCommand.Overlay 调用 status、register、request-add、bubble、clear-bubble。OverlayEntrance 的 actionId/pageId 二选一；注册只提供候选，request-add 必须经原生用户确认才写入入口。完全访问不能绕过这项确认。OverlayBubble 只允许原生文字与可选图标按钮，时长2–30秒；不能开启主软件悬浮开关或代为批准系统权限。调用方和发布者身份由宿主绑定，停用插件会移除候选和气泡。
+
+## API24 管理条目与单选
+
+ManagementItem.badges为名称旁的简短类型标签（最多4个、每个32字）；selection=ManagementSelection(action, enabled)提供独立单选操作，selected仍为当前选中状态。primaryAction与单选、辅助动作分别路由。开关优先于单选，停用项可以保留详情而禁用选用。辅助actions由宿主排在下方并按可用宽度溢出，插件不提供坐标或样式；Material Symbol与文字动作均保留。相邻同组条目使用相连圆角，手柄保留独立拖动与无障碍移动。旧11/12参数构造器、copy与默认掩码以及旧JSON缺省值兼容；使用新字段的包必须标API24。

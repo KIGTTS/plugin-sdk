@@ -1,6 +1,6 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API22兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API24兼容范围由接口及宿主共同校验，管理桥独立版本化。
 
 ```powershell
 git clone https://github.com/KIGTTS/plugin-sdk.git
@@ -15,3 +15,7 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 ## API23 · 行内操作与下载进度
 
 `ManagementList.itemActions` 为指定条目提供宿主主题按钮；`ManagementProgressAction` 支持文案、操作、确定或不确定进度环。按钮独立于条目详情点击，进度区保留稳定触控空间。旧 ManagementList 构造和 copy 方法保持兼容。
+
+## API24 · 管理条目与单选
+
+`ManagementItem.badges` 提供简短类型标签，`selection = ManagementSelection(action, enabled)` 声明独立单选控件；当前选中状态仍使用 `selected`，整行点击仍使用 `primaryAction`。开关与单选保留在行尾，辅助操作由宿主放在下排，宽度不足才收入更多菜单。相邻同组条目使用连贯圆角。保留 API9–23 的构造和 copy 入口。
