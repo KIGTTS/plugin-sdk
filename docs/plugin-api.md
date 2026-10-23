@@ -205,3 +205,5 @@ API21 PageBlock.Slider复用PluginControl.Slider，在分组卡片中直接显�
 ## API24 管理条目与单选
 
 ManagementItem.badges为名称旁的简短类型标签（最多4个、每个32字）；selection=ManagementSelection(action, enabled)提供独立单选操作，selected仍为当前选中状态。primaryAction与单选、辅助动作分别路由。开关优先于单选，停用项可以保留详情而禁用选用。辅助actions由宿主排在下方并按可用宽度溢出，插件不提供坐标或样式；Material Symbol与文字动作均保留。相邻同组条目使用相连圆角，手柄保留独立拖动与无障碍移动。旧11/12参数构造器、copy与默认掩码以及旧JSON缺省值兼容；使用新字段的包必须标API24。
+
+API24 PluginPage.headerAction复用ManagementProgressAction，在图标和标题右侧显示获取/进度/安装；与管理列表共用动作和任务状态。PluginPage.search=PluginSearch(query,actionId,placeholder)由宿主渲染聚焦搜索页，输入去抖220ms后以value提交；返回退出当前页面，清除只清空查询，不退出搜索。保留PluginPage旧4/6/8参数构造/copy默认桥，旧JSON默认无搜索和页头动作。

@@ -93,6 +93,7 @@ internal fun validateSnapshot(snapshot: PluginSnapshot) {
         require(page.id.length in 1..128 && page.title.length in 1..160)
         page.onEnterAction?.let { require(it.length in 1..128) }
         page.refreshAction?.let { require(it.length in 1..128) }
+        page.headerAction?.let { require(page.header != null) }
         page.header?.let {
             symbol(it.symbol)
             require(it.id.length in 1..128 && it.title.length in 1..160 && it.subtitle.length <= 1000)
