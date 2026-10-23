@@ -50,22 +50,36 @@ data class ManagementProgressAction(val label: String, val action: String? = nul
         require(progress == null || progress.isFinite() && progress in 0f..1f) }
 }
 @Serializable enum class ManagementListStyle { STANDARD, CATALOG }
+/** Change the action token after appending rows; the host requests each token once near the end. */
+@Serializable data class ManagementLoadMore(val action: String) {
+    init { require(action.length in 1..240) }
+}
 @Serializable
 data class ManagementList(val id: String, val items: List<ManagementItem>,
     val reorderAction: String? = null, val emptyText: String = "暂无条目", val filters: List<ManagementFilter> = emptyList(),
     val style: ManagementListStyle = ManagementListStyle.STANDARD,
-    val itemActions: Map<String, ManagementProgressAction> = emptyMap()) {
+    val itemActions: Map<String, ManagementProgressAction> = emptyMap(),
+    val shortcuts: List<PageAction> = emptyList(), val loadMore: ManagementLoadMore? = null) {
+    constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目",
+        filters: List<ManagementFilter> = emptyList(), style: ManagementListStyle = ManagementListStyle.STANDARD,
+        itemActions: Map<String, ManagementProgressAction> = emptyMap())
+        : this(id, items, reorderAction, emptyText, filters, style, itemActions, emptyList(), null)
     constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目",
         filters: List<ManagementFilter> = emptyList(), style: ManagementListStyle = ManagementListStyle.STANDARD)
         : this(id, items, reorderAction, emptyText, filters, style, emptyMap())
     constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目", filters: List<ManagementFilter> = emptyList())
         : this(id, items, reorderAction, emptyText, filters, ManagementListStyle.STANDARD)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
-        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions)
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
         emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
-        style: ManagementListStyle = this.style): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions)
+        style: ManagementListStyle = this.style): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
+    fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
+        style: ManagementListStyle = this.style, itemActions: Map<String, ManagementProgressAction> = this.itemActions): ManagementList =
+        ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
     init { require(items.size <= 1000 && items.map { it.id }.distinct().size == items.size)
+        require(shortcuts.size <= 12 && shortcuts.map { it.id }.distinct().size == shortcuts.size)
         require(itemActions.size <= 1000 && itemActions.keys.all { key -> items.any { it.id == key } }) }
 }
 

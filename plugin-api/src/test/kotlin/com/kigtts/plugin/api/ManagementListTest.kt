@@ -30,7 +30,7 @@ class ManagementListTest {
         assertEquals(page, PluginJson.decodeFromString<PluginPage>(PluginJson.encodeToString(page)))
     }
     @Test fun inlineActionsRoundTripAndOldCopyRetainsThem() {
-        for (count in listOf(5, 6)) {
+        for (count in listOf(5, 6, 7)) {
             val type = ManagementList::class.java
             assertTrue(type.constructors.any { it.parameterCount == count })
             assertTrue(type.declaredMethods.any { it.name == "copy" && it.parameterCount == count })
@@ -42,5 +42,14 @@ class ManagementListTest {
         assertEquals(list.itemActions, list.copy(emptyText = "Empty").itemActions)
         assertThrows(IllegalArgumentException::class.java) { ManagementProgressAction("Bad", progress = Float.NaN) }
         assertThrows(IllegalArgumentException::class.java) { ManagementProgressAction("Bad", progress = 2f) }
+    }
+    @Test fun catalogShortcutsAndIncrementalTokenPreserveOldCopiesAndWireDefaults() {
+        val list = ManagementList("catalog", emptyList(), shortcuts = listOf(PageAction("categories", "分类", symbol = "category")),
+            loadMore = ManagementLoadMore("load/12"))
+        assertEquals(list, PluginJson.decodeFromString<ManagementList>(PluginJson.encodeToString(list)))
+        assertEquals(list.shortcuts, list.copy(emptyText = "Empty").shortcuts)
+        assertEquals(list.loadMore, list.copy(itemActions = emptyMap()).loadMore)
+        val old = PluginJson.decodeFromString<ManagementList>("""{"id":"old","items":[]}""")
+        assertTrue(old.shortcuts.isEmpty()); assertNull(old.loadMore)
     }
 }

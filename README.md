@@ -1,6 +1,6 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API24兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API25兼容范围由接口及宿主共同校验，管理桥独立版本化。
 
 ```powershell
 git clone https://github.com/KIGTTS/plugin-sdk.git
@@ -19,3 +19,7 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 ## API24 · 管理条目与单选
 
 `ManagementItem.badges` 提供简短类型标签，`selection = ManagementSelection(action, enabled)` 声明独立单选控件；当前选中状态仍使用 `selected`，整行点击仍使用 `primaryAction`。开关与单选保留在行尾，辅助操作由宿主放在下排，宽度不足才收入更多菜单。相邻同组条目使用连贯圆角。保留 API9–23 的构造和 copy 入口。
+
+## API25 · 商店导航与滚动加载
+
+目录列表可通过 `ManagementList.shortcuts` 在顶部声明宫格入口，`filters` 显示主题色 Tab。`loadMore` 提供到达列表末尾时调用的动作；追加条目后更新动作标识，加载完毕后设为 null。宿主保留现有列表和滚动位置，每个标识仅自动调用一次。旧构造器、默认掩码和 copy 入口继续保留。
