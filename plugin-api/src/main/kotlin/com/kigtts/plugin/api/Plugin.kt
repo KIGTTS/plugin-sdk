@@ -78,7 +78,11 @@ sealed interface PluginOutcome {
      * Does not replace the editable document or present a media quick text. No network access.
      */
     @Serializable
-    data class SetSubtitleRenderer(val root: PluginResource? = null, val mainPage: String = "index.html") : PluginOutcome
+    data class SetSubtitleRenderer(val root: PluginResource? = null, val mainPage: String = "index.html",
+        val presentation: PanelPresentation = PanelPresentation()) : PluginOutcome {
+        constructor(root: PluginResource? = null, mainPage: String = "index.html") : this(root, mainPage, PanelPresentation())
+        fun copy(root: PluginResource? = this.root, mainPage: String = this.mainPage): SetSubtitleRenderer = SetSubtitleRenderer(root, mainPage, presentation)
+    }
     /** Session-only secondary panel owned by this plugin. Null restores this owner's native panel.
      * pageId resolves through page(); Browser and native blocks share normal permissions/actions.
      * replaceContent=false overlays the original captions. replaceControls filters bottom slots
@@ -86,7 +90,12 @@ sealed interface PluginOutcome {
      */
     @Serializable
     data class SetListeningPanel(val pageId: String? = null, val replaceContent: Boolean = true,
-        val replaceControls: Boolean = true) : PluginOutcome
+        val replaceControls: Boolean = true, val fadeControlsWhenIdle: Boolean = false) : PluginOutcome {
+        constructor(pageId: String? = null, replaceContent: Boolean = true, replaceControls: Boolean = true)
+            : this(pageId, replaceContent, replaceControls, false)
+        fun copy(pageId: String? = this.pageId, replaceContent: Boolean = this.replaceContent, replaceControls: Boolean = this.replaceControls): SetListeningPanel =
+            SetListeningPanel(pageId, replaceContent, replaceControls, fadeControlsWhenIdle)
+    }
     @Serializable
     data class SelectTtsService(val pluginId: String) : PluginOutcome
     @Serializable

@@ -23,3 +23,5 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 ## API25 · 商店导航与滚动加载
 
 目录列表可通过 `ManagementList.shortcuts` 在顶部声明宫格入口，`filters` 显示主题色 Tab。`loadMore` 提供到达列表末尾时调用的动作；追加条目后更新动作标识，加载完毕后设为 null。宿主保留现有列表和滚动位置，每个标识仅自动调用一次。旧构造器、默认掩码和 copy 入口继续保留。
+
+API25 展示：`SetSubtitleRenderer.presentation` 接受 `PanelPresentation(fullscreenBackground = 0xff000000L, fadeControlsWhenIdle = true)`；外围色为 ARGB，仅全屏使用。`SetListeningPanel.fadeControlsWhenIdle` 同样支持闲置按钮淡化。宿主保留安全区、触摸与键盘可恢复按钮，默认约6秒后淡化并遵守系统无障碍超时。旧请求默认保持原样。
