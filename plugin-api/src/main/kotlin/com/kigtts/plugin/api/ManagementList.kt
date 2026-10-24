@@ -41,7 +41,12 @@ data class ManagementItem(val id: String, val title: String, val subtitle: Strin
 }
 
 @Serializable
-data class ManagementFilter(val id: String, val label: String, val action: String, val selected: Boolean = false)
+data class ManagementFilter(val id: String, val label: String, val action: String, val selected: Boolean = false,
+    val symbol: String? = null) {
+    // Preserve the four-argument constructor used by existing signed plugins.
+    constructor(id: String, label: String, action: String, selected: Boolean)
+        : this(id, label, action, selected, null)
+}
 /** A host-themed inline action. A progress value renders a cancellable ring; null is indeterminate. */
 @Serializable
 data class ManagementProgressAction(val label: String, val action: String? = null,
