@@ -31,6 +31,14 @@ internal fun validateSnapshot(snapshot: PluginSnapshot) {
         for (block in items) {
             require(++count <= 1000)
             when (block) {
+                is PageBlock.StrokeGuide -> {
+                    require(block.title.length in 1..160 && block.instruction.length in 1..1000 && block.summary.length <= 1000)
+                    require(block.points.size in 2..128 && block.points.all { it.x.isFinite() && it.y.isFinite() && it.x in 0f..1f && it.y in 0f..1f })
+                    require(block.points.distinct().size >= 2)
+                    block.toggle?.let { require(it.action.length in 1..128) }
+                    require(block.actions.size <= 4)
+                    block.actions.forEach { symbol(it.symbol); require(it.id.length in 1..128 && it.label.length in 1..160) }
+                }
                 is PageBlock.Slider -> {
                     val c = block.control
                     require(c.title.length in 1..160 && c.actionId.length in 1..128)

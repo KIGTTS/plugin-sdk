@@ -109,6 +109,11 @@ data class PageAction(val id: String, val label: String, val icon: PluginIcon = 
 /** A plugin can build a new page without depending on Compose or an Activity. */
 @Serializable
 sealed interface PageBlock {
+    /** A native vector row; tapping opens instructions and a replay of this single stroke. */
+    @Serializable
+    data class StrokeGuide(val title: String, val instruction: String, val points: List<StrokePoint>,
+        val summary: String = "", val toggle: ManagementToggle? = null,
+        val actions: List<PageAction> = emptyList()) : PageBlock
     /** Inline numeric setting; host commits a decimal value when the drag finishes. */
     @Serializable
     data class Slider(val control: PluginControl.Slider) : PageBlock

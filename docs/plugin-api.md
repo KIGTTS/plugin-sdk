@@ -214,3 +214,6 @@ API24 PluginPage.headerAction复用ManagementProgressAction，在图标和标题
 `PanelPresentation.blockHomeSideSwipes=true` 保留字幕表面的横向手势，不影响区域外的侧滑导航。网页与启用的 `SUBTITLE_STROKE` 自动避让；关闭插件或移除表面后释放。无需插件自行消费整页事件，点按、长按与双指缩放仍按现有合同处理。
 
 `OverlayEntrance.category` 指定手动选择入口的分类，`badge` 复用通用 `PluginBadge`（主题/警告/黄色、圆点/数字、99+）。同ID再次注册更新状态；注册不等于添加，仍由用户选择或确认。宿主同时把插件设置/抽屉页和顶栏动作列入候选。保存入口在停用或卸载后置灰，重新启用时必须匹配原发布者。两个新字段组保留旧构造、copy/default 与 JSON 缺省行为。
+
+## API27 手势绘制说明
+PageBlock.StrokeGuide(title, instruction, points, summary, toggle, actions) 在原生行中显示单笔矢量图与起点。点击行打开说明弹窗并重放笔画，开关与下排操作独立响应。StrokePoint 使用0..1归一化坐标，至少2个不同点，最多128点；不接收非有限数值。使用该类型的插件需要API27宿主，已有API9..26插件保持兼容。
