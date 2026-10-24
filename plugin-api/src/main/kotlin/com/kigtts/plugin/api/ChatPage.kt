@@ -16,6 +16,16 @@ import kotlinx.serialization.Serializable
     val summary: String = "", val toolName: String = "", val detail: String = "", val icon: PluginIcon = PluginIcon.INFO,
     val images: List<ChatImage> = emptyList(), val thinking: Boolean = false, val position: Int = -1,
     val hasReasoning: Boolean = false, val options: List<ChatOption> = emptyList()) {
+    // Preserve the pre-options ABI used by installed Agent packages, including default bridges.
+    constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
+        summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO,
+        images: List<ChatImage> = emptyList(), thinking: Boolean = false, position: Int = -1, hasReasoning: Boolean = false)
+        : this(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, emptyList())
+    fun copy(id: String = this.id, role: ChatRole = this.role, text: String = this.text, reasoning: String = this.reasoning,
+        state: ChatMessageState = this.state, summary: String = this.summary, toolName: String = this.toolName,
+        detail: String = this.detail, icon: PluginIcon = this.icon, images: List<ChatImage> = this.images,
+        thinking: Boolean = this.thinking, position: Int = this.position, hasReasoning: Boolean = this.hasReasoning): ChatMessage =
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options)
     // Keep the first API11 constructor/copy and their Kotlin default bridges for installed 0.9.1 packages.
     constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
         summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO,
