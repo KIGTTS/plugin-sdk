@@ -12,6 +12,7 @@ data class AsrProvider(val pluginId: String, val name: String, val info: AsrInfo
 /** Only the recognition service receives this mediated protocol. Implementations remain in provider processes. */
 interface RecognitionBroker {
     fun providers(): List<AsrProvider>
+    suspend fun control(pluginId: String, command: AsrControl): Boolean = false
     suspend fun recognize(pluginId: String, audio: PcmAudio, config: RecognitionConfig): RecognitionResult
     fun recognizeStream(pluginId: String, audio: Flow<PcmAudio>, config: RecognitionConfig): Flow<RecognitionEvent>
 }

@@ -5,7 +5,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TtsProvider(val pluginId: String, val name: String, val info: TtsInfo, val enabled: Boolean = true,
-    val generation: String = "")
+    val generation: String = "", val settingsPages: List<AsrSettingsPage> = emptyList()) {
+    // Keep constructors and copy masks used by installed synthesis services.
+    constructor(pluginId: String, name: String, info: TtsInfo, enabled: Boolean = true, generation: String = "")
+        : this(pluginId, name, info, enabled, generation, emptyList())
+    fun copy(pluginId: String = this.pluginId, name: String = this.name, info: TtsInfo = this.info,
+        enabled: Boolean = this.enabled, generation: String = this.generation): TtsProvider =
+        TtsProvider(pluginId, name, info, enabled, generation, settingsPages)
+}
 
 @Serializable
 enum class VoiceOperation { IMPORT, SELECT, DELETE, RENAME, REFRESH, UPDATE_METADATA, SET_AVATAR, EXPORT, REORDER,
