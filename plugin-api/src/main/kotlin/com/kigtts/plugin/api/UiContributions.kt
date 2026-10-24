@@ -139,9 +139,10 @@ sealed interface PageBlock {
     }
     @Serializable
     data class Input(val title: String, val value: String, val actionId: String,
-        val secret: Boolean = false, val multiline: Boolean = false, val icon: PluginIcon = PluginIcon.EDIT, val symbol: String? = null) : PageBlock {
-        constructor(title: String, value: String, actionId: String, secret: Boolean = false, multiline: Boolean = false, icon: PluginIcon = PluginIcon.EDIT) : this(title, value, actionId, secret, multiline, icon, null)
-        fun copy(title: String = this.title, value: String = this.value, actionId: String = this.actionId, secret: Boolean = this.secret, multiline: Boolean = this.multiline, icon: PluginIcon = this.icon): Input = Input(title, value, actionId, secret, multiline, icon, symbol)
+        val secret: Boolean = false, val multiline: Boolean = false, val icon: PluginIcon = PluginIcon.EDIT, val symbol: String? = null,
+        val trailingAction: PageAction? = null) : PageBlock {
+        constructor(title: String, value: String, actionId: String, secret: Boolean = false, multiline: Boolean = false, icon: PluginIcon = PluginIcon.EDIT) : this(title, value, actionId, secret, multiline, icon, null, null)
+        fun copy(title: String = this.title, value: String = this.value, actionId: String = this.actionId, secret: Boolean = this.secret, multiline: Boolean = this.multiline, icon: PluginIcon = this.icon): Input = Input(title, value, actionId, secret, multiline, icon, symbol, trailingAction)
     }
     @Serializable
     data class Chat(val messages: List<ChatMessage>, val sendAction: String, val stopAction: String,

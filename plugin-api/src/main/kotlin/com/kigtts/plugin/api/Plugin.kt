@@ -116,6 +116,15 @@ sealed interface PluginOutcome {
     data class Dialog(val title: String, val text: String) : PluginOutcome
     @Serializable
     data class Menu(val title: String, val items: List<PageAction>) : PluginOutcome
+    /** Opens the host's read-only quick-text selector. The result is sent back to [actionId]. */
+    @Serializable
+    data class SelectQuickText(
+        val title: String = "选择快捷文本",
+        val mode: QuickTextSelectionMode = QuickTextSelectionMode.SINGLE,
+        val selectedIds: List<String> = emptyList(),
+        val actionId: String = "quick-text-selection",
+        val cancelActionId: String? = null,
+    ) : PluginOutcome
     /** Native, internally scrolling settings. Changes call actionId with inputs["value"].
      * Returning NoAction keeps the panel open; returning Controls replaces its values.
      */

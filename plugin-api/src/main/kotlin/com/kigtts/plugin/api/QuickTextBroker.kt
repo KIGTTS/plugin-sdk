@@ -13,6 +13,7 @@ interface QuickTextBroker {
 }
 
 @Serializable enum class QuickCardKind { TEXT, AUDIO, MEDIA, PAGE }
+@Serializable enum class QuickTextSelectionMode { SINGLE, MULTIPLE }
 @Serializable enum class QuickColorKind { DEFAULT, CUSTOM, NONE }
 @Serializable enum class QuickAudioPolicy { SILENT, AUTOMATIC, FOLLOW_READING }
 @Serializable enum class QuickFormatKind { BOLD, ITALIC, UNDERLINE, COLOR, SIZE }
@@ -34,7 +35,7 @@ interface QuickTextBroker {
     val groupChanges:Int,val titles:List<String>,val requiresConfirmation:Boolean)
 @Serializable data class QuickTextFeatures(val protocol:Int=1,val operations:List<String>,val writable:Boolean,
     val maxBatchOperations:Int=100,val maxQueryItems:Int=50,val groupIcons:List<String> = emptyList(),
-    val features:Map<String,String> = mapOf("html-tools" to "subtitle-page","inline-widgets" to "false","archive-schema" to "1","notifications" to "invalidation"))
+    val features:Map<String,String> = mapOf("html-tools" to "subtitle-page","inline-widgets" to "false","archive-schema" to "1","notifications" to "invalidation","quick-text-selector" to "single,multiple"))
 @Serializable sealed interface QuickFileEdit {
     @Serializable @SerialName("directory") data class Directory(val path:String):QuickFileEdit
     @Serializable @SerialName("put") data class Put(val path:String,val source:PluginResource):QuickFileEdit
