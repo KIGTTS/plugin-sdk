@@ -28,8 +28,16 @@ data class VoicePackMetadata(val name: String, val remark: String = "", val pinn
 @Serializable
 data class VoicePackInfo(val id: String, val metadata: VoicePackMetadata, val voiceIds: List<String>,
     val avatarPath: String? = null, val editable: Boolean = false, val exportable: Boolean = false, val deletable: Boolean = false,
-    val parameters: List<VoiceParameter> = emptyList()) {
-    init { require(parameters.size <= 32 && parameters.map { it.id }.distinct().size == parameters.size) }
+    val parameters: List<VoiceParameter> = emptyList(), val providerLabel: String = "") {
+    init { require(providerLabel.length <= 32); require(parameters.size <= 32 && parameters.map { it.id }.distinct().size == parameters.size) }
+    constructor(id: String, metadata: VoicePackMetadata, voiceIds: List<String>, avatarPath: String? = null,
+        editable: Boolean = false, exportable: Boolean = false, deletable: Boolean = false,
+        parameters: List<VoiceParameter> = emptyList())
+        : this(id, metadata, voiceIds, avatarPath, editable, exportable, deletable, parameters, "")
+    fun copy(id: String = this.id, metadata: VoicePackMetadata = this.metadata, voiceIds: List<String> = this.voiceIds,
+        avatarPath: String? = this.avatarPath, editable: Boolean = this.editable, exportable: Boolean = this.exportable,
+        deletable: Boolean = this.deletable, parameters: List<VoiceParameter> = this.parameters): VoicePackInfo =
+        VoicePackInfo(id, metadata, voiceIds, avatarPath, editable, exportable, deletable, parameters, providerLabel)
     // Preserve installed API9-20 constructors/default masks and copy methods.
     constructor(id: String, metadata: VoicePackMetadata, voiceIds: List<String>, avatarPath: String? = null,
         editable: Boolean = false, exportable: Boolean = false, deletable: Boolean = false)
@@ -37,7 +45,7 @@ data class VoicePackInfo(val id: String, val metadata: VoicePackMetadata, val vo
     fun copy(id: String = this.id, metadata: VoicePackMetadata = this.metadata, voiceIds: List<String> = this.voiceIds,
         avatarPath: String? = this.avatarPath, editable: Boolean = this.editable, exportable: Boolean = this.exportable,
         deletable: Boolean = this.deletable): VoicePackInfo =
-        VoicePackInfo(id, metadata, voiceIds, avatarPath, editable, exportable, deletable, parameters)
+        VoicePackInfo(id, metadata, voiceIds, avatarPath, editable, exportable, deletable, parameters, providerLabel)
 }
 
 /** Provider-owned settings. Values are scoped to one pack and exclude the service's global rate. */
