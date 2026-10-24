@@ -62,7 +62,7 @@ foreach ($module in $Modules) {
     foreach($extra in @($config.extraAars)) {
         $jars += @(Expand-PluginAar (Join-Path $moduleRoot $extra) $payload $scratch 'extra' $nativeAbi)
     }
-    foreach ($dependency in @(Get-ChildItem -LiteralPath (Join-Path $moduleRoot 'build/plugin-dependencies') -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^(debug-ui|onnxruntime-android|xz-|tts-support|commons-compress|commons-io|commons-codec|commons-lang3|luaj-jse)' })) {
+    foreach ($dependency in @(Get-ChildItem -LiteralPath (Join-Path $moduleRoot 'build/plugin-dependencies') -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^(debug-ui|onnxruntime-android|xz-|tts-support|commons-compress|commons-io|commons-codec|commons-lang3|luaj-jse|okhttp-|okio-)' })) {
         if ($dependency.Extension -eq '.aar') { $jars += @(Expand-PluginAar $dependency.FullName $payload $scratch $dependency.BaseName $nativeAbi) }
         elseif ($dependency.Extension -eq '.jar') { $jars += $dependency.FullName }
     }

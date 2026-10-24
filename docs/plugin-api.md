@@ -217,3 +217,8 @@ API24 PluginPage.headerAction复用ManagementProgressAction，在图标和标题
 
 ## API27 手势绘制说明
 PageBlock.StrokeGuide(title, instruction, points, summary, toggle, actions) 在原生行中显示单笔矢量图与起点。点击行打开说明弹窗并重放笔画，开关与下排操作独立响应。StrokePoint 使用0..1归一化坐标，至少2个不同点，最多128点；不接收非有限数值。使用该类型的插件需要API27宿主，已有API9..26插件保持兼容。
+
+## API28 识别加载与引擎入口
+引擎可实现 `ControlledAsrEngine`，通过 `AsrControl(PREPARE/RELEASE)` 复用或释放模型；服务通过 `RecognitionBroker.control` 调用。非控制型旧引擎继续按自身方式加载。服务的空闲保留时间可设为 5–120 秒。`TtsProvider.settingsPages` 与 ASR 一样提供独立引擎配置页，宿主统一汇总正式及旧设置入口，服务负责展示。旧 TtsProvider 构造器与 copy 方法保留。
+
+打包器将收集所声明的 OkHttp/Okio 依赖，支持签名 HTTP 与 WebSocket 云端语音插件；不会把插件 SDK 合并进包。
