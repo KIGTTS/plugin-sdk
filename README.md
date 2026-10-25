@@ -1,6 +1,8 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API25兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API29兼容范围由接口及宿主共同校验，管理桥独立版本化。
+
+API29 增加 `AppCommand.OpenWeb`（字幕网页 / Custom Tabs）与独立的 [KPM 资源包](docs/resource-packages.md) 导入及结果回执。网页和 NFC 使用统一的官网信任与第三方提示规则；添加到快捷文本始终确认。
 
 ```powershell
 git clone https://github.com/KIGTTS/plugin-sdk.git

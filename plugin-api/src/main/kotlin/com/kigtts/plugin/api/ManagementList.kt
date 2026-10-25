@@ -64,7 +64,12 @@ data class ManagementList(val id: String, val items: List<ManagementItem>,
     val reorderAction: String? = null, val emptyText: String = "暂无条目", val filters: List<ManagementFilter> = emptyList(),
     val style: ManagementListStyle = ManagementListStyle.STANDARD,
     val itemActions: Map<String, ManagementProgressAction> = emptyMap(),
-    val shortcuts: List<PageAction> = emptyList(), val loadMore: ManagementLoadMore? = null) {
+    val shortcuts: List<PageAction> = emptyList(), val loadMore: ManagementLoadMore? = null,
+    val sectionActions: Map<String, PageAction> = emptyMap()) {
+    constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目",
+        filters: List<ManagementFilter> = emptyList(), style: ManagementListStyle = ManagementListStyle.STANDARD,
+        itemActions: Map<String, ManagementProgressAction> = emptyMap(), shortcuts: List<PageAction> = emptyList(), loadMore: ManagementLoadMore? = null)
+        : this(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore, emptyMap())
     constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目",
         filters: List<ManagementFilter> = emptyList(), style: ManagementListStyle = ManagementListStyle.STANDARD,
         itemActions: Map<String, ManagementProgressAction> = emptyMap())
@@ -75,17 +80,23 @@ data class ManagementList(val id: String, val items: List<ManagementItem>,
     constructor(id: String, items: List<ManagementItem>, reorderAction: String? = null, emptyText: String = "暂无条目", filters: List<ManagementFilter> = emptyList())
         : this(id, items, reorderAction, emptyText, filters, ManagementListStyle.STANDARD)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
-        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore, sectionActions)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
         emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
-        style: ManagementListStyle = this.style): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
+        style: ManagementListStyle = this.style): ManagementList = ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore, sectionActions)
     fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
         emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
         style: ManagementListStyle = this.style, itemActions: Map<String, ManagementProgressAction> = this.itemActions): ManagementList =
-        ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore)
+        ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore, sectionActions)
+    fun copy(id: String = this.id, items: List<ManagementItem> = this.items, reorderAction: String? = this.reorderAction,
+        emptyText: String = this.emptyText, filters: List<ManagementFilter> = this.filters,
+        style: ManagementListStyle = this.style, itemActions: Map<String, ManagementProgressAction> = this.itemActions,
+        shortcuts: List<PageAction> = this.shortcuts, loadMore: ManagementLoadMore? = this.loadMore): ManagementList =
+        ManagementList(id, items, reorderAction, emptyText, filters, style, itemActions, shortcuts, loadMore, sectionActions)
     init { require(items.size <= 1000 && items.map { it.id }.distinct().size == items.size)
         require(shortcuts.size <= 12 && shortcuts.map { it.id }.distinct().size == shortcuts.size)
-        require(itemActions.size <= 1000 && itemActions.keys.all { key -> items.any { it.id == key } }) }
+        require(itemActions.size <= 1000 && itemActions.keys.all { key -> items.any { it.id == key } })
+        require(sectionActions.size <= 100 && sectionActions.keys.all { it.isNotBlank() && it.length <= 128 }) }
 }
 
 /** Keeps installed/new entries deterministic while retaining a saved order for returning IDs. */

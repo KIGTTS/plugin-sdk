@@ -2,7 +2,8 @@ package com.kigtts.plugin.api
 
 /** Public web UI contract shared by native plugins and the built-in Agent prompt/tool. */
 object WebUiGuide {
-    const val TEXT = """KIGTTS Web UI v4 (host API21)
+    const val TEXT = """KIGTTS Web UI v5 (host API29)
+External links: use kigtts://open?url=<URL-encoded HTTPS URL>&mode=quick-text|custom-tab&add=true|false&title=<encoded title>. API29 native plugins may call AppCommand.OpenWeb with declared network permission. Only HTTPS lhtstudio.com and its actual subdomains are trusted; other websites show a third-party confirmation. Saving to quick texts always needs a user confirmation. Custom Tabs display browser-owned content, not a local HTML bridge. Do not use hidden intents, install callbacks or local resource schemes in links. Use the shared theme styles below for pages rendered inside KIGTTS; read all palette roles rather than hardcoding a light/dark background.
 Local HTML origin: https://appassets.androidplatform.net/content/ .
 Use <meta name="viewport" content="width=device-width,initial-scale=1">.
 Load <link rel="stylesheet" href="/kigtts/theme.css"> and <link rel="stylesheet" href="/kigtts/m3e.css">.

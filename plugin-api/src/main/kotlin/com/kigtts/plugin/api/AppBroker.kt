@@ -8,6 +8,12 @@ import kotlinx.serialization.json.JsonObject
 interface AppBroker { suspend fun request(command: AppCommand): AppReply }
 
 @Serializable sealed interface AppCommand {
+    /** API29. Install a signed data archive after host review, or inspect the caller's own receipt. */
+    @Serializable @SerialName("resource-package") data class ResourcePackage(val operation: String = "install",
+        val source: PluginResource? = null, val expectedPublisher: String? = null, val token: String? = null) : AppCommand
+    /** API29. HTTPS handoff to subtitle or browser Custom Tab. Untrusted sites and saving always require user confirmation. */
+    @Serializable @SerialName("open-web") data class OpenWeb(val url: String, val title: String = "",
+        val mode: String = "custom-tab", val addToQuickText: Boolean = false) : AppCommand
     /** Registration never adds an entrance; request-add always needs a user tap. */
     @Serializable @SerialName("overlay") data class Overlay(val operation: String = "status",
         val shortcut: OverlayEntrance? = null, val bubble: OverlayBubble? = null, val id: String? = null) : AppCommand
