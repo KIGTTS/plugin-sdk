@@ -191,4 +191,8 @@ sealed interface PageBlock {
 }
 
 @Serializable
-data class PageImage(val resource: PluginResource, val description: String = "")
+data class PageImage(val resource: PluginResource, val description: String = "", val width: Int? = null, val height: Int? = null) {
+    constructor(resource: PluginResource, description: String = "") : this(resource, description, null, null)
+    fun copy(resource: PluginResource = this.resource, description: String = this.description): PageImage = PageImage(resource, description, width, height)
+    init { require((width == null && height == null) || (width != null && height != null && width > 0 && height > 0)) }
+}
