@@ -1,7 +1,7 @@
-# KPM 资源包（API29）
+# KPM 资源包（API29 / API30）
 
 `.kigresource` 是签名 ZIP 数据包，与 `.kigplugin` / `.kiglua` 的安装生命周期独立。
-支持 QUICK_TEXT、PHOTOS、FILTER、VOICE、FRAME、STICKERS。导入后的内容由对应功能管理，不注册插件，不创建卸载条目。
+支持 QUICK_TEXT、PHOTOS、FILTER、VOICE、FRAME、STICKERS、CARD_FRAME。导入后的内容由对应功能管理，不注册插件，不创建卸载条目。
 
 根文件 `resource.json` 使用 `ResourcePackageManifest`，包含唯一 id、名称、版本、resourceType 和 `files`（每份载荷的 SHA256）。
 `signature/public.der` 是 RSA 公钥；`signature/manifest.sig` 使用 SHA256withRSA 对 resource.json 原始 UTF8 字节签名。
@@ -23,3 +23,34 @@
 accepted/pending 不是完成。DEFERRED 表示先添加前置服务，完成后重新提交缓存包；导入结果不得依据插件安装列表推断。
 
 商店源使用 schemaVersion=2，资源条目填写 resourceType，发行格式 RESOURCE，保留下载镜像、校验值、签名发布者和依赖版本范围。
+
+## API30：名片边框
+
+`CARD_FRAME` 与拍立得 `FRAME` 分属不同资源库。最低 apiVersion=30。
+`content.json` 保留空对象，根目录另放 `card-frames.json`：
+
+```json
+{"schemaVersion":1,"items":[{"id":"fine","name":"细线","artwork":"art/fine.svg"}]}
+```
+
+artwork 支持包内 SVG 或位图，透明区域保留背景；SVG 建议 viewBox 为 0 0 1024 576。
+所有引用文件必须列入 resource.json.files。安装后出现在个人信息 → 名片背景 → 名片边框。
+
+## API30：参数贴纸
+
+STICKERS 可以附带 `generators.json`（允许只含生成器，不含静态条目）：
+
+```json
+{"schemaVersion":1,"items":[{"id":"word","name":"艺术字","template":"art/word.svg","width":1024,"height":512,"parameters":[{"id":"text","label":"文字","kind":"TEXT","default":"你好","maxLength":80},{"id":"ink","label":"颜色","kind":"COLOR","default":"#00696E"}],"fonts":{"ArtFont":"fonts/art.ttf"}}]}
+```
+
+SVG 用 `{{text}}`、`{{ink}}` 占位；文本会进行 XML 转义。字体可嵌入 TTF/OTF，随包附带许可；`<text font-family="ArtFont">` 会转换为路径，修改某张贴纸不会改动模板或其它贴纸。
+参数支持 TEXT / COLOR / NUMBER / CHOICE。NUMBER 必须提供有限的 minimum < maximum；CHOICE 提供 choices。禁止外链、脚本、事件、DOCTYPE 和外部字体。
+选中参数贴纸可点击齿轮或再次点击贴纸调整。
+
+## API30：通用作品选择器
+
+返回 `PluginOutcome.SelectArtwork(ArtworkSelectionRequest(ArtworkLibrary.POLAROIDS, multiple = true, actionId = "chosen"))`。
+另可选 PERSONAL_CARDS、SKETCHES。宿主只展示只读选择器，未确认或取消不会导出。
+确认后回调 actionId，inputs["artworks"] 为 JSON 数组，每项含 id、library 和调用者私有 resourcePath；目录可由 request.directory 指定。
+取消时调用 cancelActionId（若提供），同样返回空数组。支持单选、多选、预览与按住滑选。

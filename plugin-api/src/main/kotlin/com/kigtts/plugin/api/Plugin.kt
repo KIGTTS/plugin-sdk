@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 29
+const val PLUGIN_API_VERSION = 30
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -116,6 +116,9 @@ sealed interface PluginOutcome {
     data class Dialog(val title: String, val text: String) : PluginOutcome
     @Serializable
     data class Menu(val title: String, val items: List<PageAction>) : PluginOutcome
+    /** Opens a read-only artwork picker; exports only user-confirmed images. */
+    @Serializable
+    data class SelectArtwork(val request: ArtworkSelectionRequest) : PluginOutcome
     /** Opens the host's read-only quick-text selector. The result is sent back to [actionId]. */
     @Serializable
     data class SelectQuickText(
