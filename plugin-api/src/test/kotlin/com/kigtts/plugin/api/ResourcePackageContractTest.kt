@@ -5,6 +5,13 @@ import kotlin.test.*
 import org.junit.Test
 
 class ResourcePackageContractTest {
+    @Test fun fontPackageRetainsTheSignedPayloadContract() {
+        val manifest = ResourcePackageManifest(id = "resources.font", name = "字体", version = "1.0.0", versionCode = 1,
+            resourceType = ResourceType.FONT, apiVersion = 32, files = mapOf("font.ttf" to "a".repeat(64)))
+        assertEquals(manifest, PluginJson.decodeFromString<ResourcePackageManifest>(PluginJson.encodeToString(manifest)))
+        val content = ResourcePackageContent(payload = "font.ttf")
+        assertEquals(content, PluginJson.decodeFromString<ResourcePackageContent>(PluginJson.encodeToString(content)))
+    }
     @Test fun previewDimensionsRetainArbitraryAspectAndLegacyConstructors() {
         val image = PageImage(PluginResource("preview.svg"), "长图", 1, 100000)
         assertEquals(image, PluginJson.decodeFromString<PageImage>(PluginJson.encodeToString(image)))

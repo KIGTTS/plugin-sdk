@@ -1,7 +1,7 @@
 # KPM 资源包（API29 / API30）
 
 `.kigresource` 是签名 ZIP 数据包，与 `.kigplugin` / `.kiglua` 的安装生命周期独立。
-支持 QUICK_TEXT、PHOTOS、FILTER、VOICE、FRAME、STICKERS、CARD_FRAME。导入后的内容由对应功能管理，不注册插件，不创建卸载条目。
+支持 QUICK_TEXT、PHOTOS、FILTER、VOICE、FRAME、STICKERS、CARD_FRAME、FONT。导入后的内容由对应功能管理，不注册插件，不创建卸载条目。
 
 根文件 `resource.json` 使用 `ResourcePackageManifest`，包含唯一 id、名称、版本、resourceType 和 `files`（每份载荷的 SHA256）。
 `signature/public.der` 是 RSA 公钥；`signature/manifest.sig` 使用 SHA256withRSA 对 resource.json 原始 UTF8 字节签名。
@@ -15,6 +15,7 @@
 - FRAME：frames 包含相纸样式，可通过 imageFiles 引用覆盖图片。
 - PHOTOS：snapshot 包含拍立得设计，imageFiles 将设计里的图片 id 映射到载荷文件；可附带 frames。
 - STICKERS：snapshot 包含贴纸库与条目，imageFiles 映射图片。
+- FONT（API32）：payload 指向单个 TTF/OTF（最大40 MB），随包携带字体许可。添加后进入“外观 → 字体”的“我的字体”，不自动切换当前字体。重装相同字体按内容去重，不进入插件管理器。商店预览使用源中的 SVG 字形图片。
 
 图片资源先支持位图；imageFiles 与相框结构保留扩展能力，后续可加入 SVG/图片组合样式而不改变资源包的插件隔离原则。
 
