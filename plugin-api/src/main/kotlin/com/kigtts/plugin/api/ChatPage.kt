@@ -4,6 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable enum class ChatRole { USER, ASSISTANT, TOOL }
 @Serializable enum class ChatMessageState { COMPLETE, STREAMING, FAILED, CANCELLED }
+/** A scoped original file. Opening is a plugin action, never an arbitrary OS path. */
+@Serializable data class ChatFile(val source: PluginResource, val name: String, val bytes: Long = 0,
+    val mimeType: String = "application/octet-stream", val openAction: String? = null)
 @Serializable data class ChatImage(val source: PluginResource, val description: String = "图片")
 @Serializable data class ChatQueuedMessage(val id: String, val text: String, val removeAction: String, val frontAction: String,
     val steerAction: String? = null, val reorderAction: String? = null) {
@@ -15,7 +18,20 @@ import kotlinx.serialization.Serializable
     val reasoning: String = "", val state: ChatMessageState = ChatMessageState.COMPLETE,
     val summary: String = "", val toolName: String = "", val detail: String = "", val icon: PluginIcon = PluginIcon.INFO,
     val images: List<ChatImage> = emptyList(), val thinking: Boolean = false, val position: Int = -1,
-    val hasReasoning: Boolean = false, val options: List<ChatOption> = emptyList()) {
+    val hasReasoning: Boolean = false, val options: List<ChatOption> = emptyList(), val files: List<ChatFile> = emptyList()) {
+    // API30 constructor/copy bridges remain callable by already installed packages.
+    constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
+        summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO,
+        images: List<ChatImage> = emptyList(), thinking: Boolean = false, position: Int = -1,
+        hasReasoning: Boolean = false, options: List<ChatOption> = emptyList())
+        : this(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, emptyList())
+    fun copy(id: String = this.id, role: ChatRole = this.role, text: String = this.text, reasoning: String = this.reasoning,
+        state: ChatMessageState = this.state, summary: String = this.summary, toolName: String = this.toolName,
+        detail: String = this.detail, icon: PluginIcon = this.icon, images: List<ChatImage> = this.images,
+        thinking: Boolean = this.thinking, position: Int = this.position, hasReasoning: Boolean = this.hasReasoning,
+        options: List<ChatOption> = this.options): ChatMessage =
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, files)
+
     // Preserve the pre-options ABI used by installed Agent packages, including default bridges.
     constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
         summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO,
@@ -25,7 +41,7 @@ import kotlinx.serialization.Serializable
         state: ChatMessageState = this.state, summary: String = this.summary, toolName: String = this.toolName,
         detail: String = this.detail, icon: PluginIcon = this.icon, images: List<ChatImage> = this.images,
         thinking: Boolean = this.thinking, position: Int = this.position, hasReasoning: Boolean = this.hasReasoning): ChatMessage =
-        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options)
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, files)
     // Keep the first API11 constructor/copy and their Kotlin default bridges for installed 0.9.1 packages.
     constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
         summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO,
@@ -35,19 +51,19 @@ import kotlinx.serialization.Serializable
         state: ChatMessageState = this.state, summary: String = this.summary, toolName: String = this.toolName,
         detail: String = this.detail, icon: PluginIcon = this.icon, images: List<ChatImage> = this.images,
         thinking: Boolean = this.thinking, position: Int = this.position): ChatMessage =
-        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options)
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, files)
     constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE,
         summary: String = "", toolName: String = "", detail: String = "", icon: PluginIcon = PluginIcon.INFO)
         : this(id, role, text, reasoning, state, summary, toolName, detail, icon, emptyList(), false, -1, reasoning.isNotBlank(), emptyList())
     fun copy(id: String = this.id, role: ChatRole = this.role, text: String = this.text, reasoning: String = this.reasoning,
         state: ChatMessageState = this.state, summary: String = this.summary, toolName: String = this.toolName,
         detail: String = this.detail, icon: PluginIcon = this.icon): ChatMessage =
-        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options)
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, files)
     constructor(id: String, role: ChatRole, text: String, reasoning: String = "", state: ChatMessageState = ChatMessageState.COMPLETE)
         : this(id, role, text, reasoning, state, "", "", "", PluginIcon.INFO, emptyList(), false, -1, reasoning.isNotBlank(), emptyList())
     fun copy(id: String = this.id, role: ChatRole = this.role, text: String = this.text,
         reasoning: String = this.reasoning, state: ChatMessageState = this.state): ChatMessage =
-        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options)
+        ChatMessage(id, role, text, reasoning, state, summary, toolName, detail, icon, images, thinking, position, hasReasoning, options, files)
 }
 @Serializable enum class ChatControlKind { MODEL, ACCESS, PROVIDER, REASONING }
 @Serializable data class ChatOption(val action: String, val label: String, val value: String = "", val section: String = "") {

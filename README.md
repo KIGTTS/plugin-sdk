@@ -1,6 +1,6 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API29兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API31兼容范围由接口及宿主共同校验，管理桥独立版本化。
 
 API29 增加 `AppCommand.OpenWeb`（字幕网页 / Custom Tabs）与独立的 [KPM 资源包](docs/resource-packages.md) 导入及结果回执。网页和 NFC 使用统一的官网信任与第三方提示规则；添加到快捷文本始终确认。
 
@@ -33,3 +33,7 @@ API25 展示：`SetSubtitleRenderer.presentation` 接受 `PanelPresentation(full
 `UiAction.badge`、`PageAction.badge`、`SettingsEntry.badge` 共用 `PluginBadge`。设为 `null` 隐藏；`PluginBadge()` 显示圆点；`PluginBadge(count = 8, description = "8 个插件可更新")` 显示数字，超过 99 由宿主显示 `99+`。数量必须大于 0；没有待处理项目时传 `null`。
 
 `tone` 支持 `BadgeTone.THEME`（主题色）、`WARNING`（错误/警告色）和 `CAUTION`（黄色，适合待审核）。`description` 是给无障碍服务的完整说明，数字缩写不影响读屏。插件通过 `uiChanges` 更新贡献快照；不要为了刷新气泡重新加载插件或重建页面。状态由插件管理，宿主不会代为清除提醒。旧构造器、默认参数与 copy 入口保持兼容。
+
+## API31 · 通用聊天文件
+
+ChatFile保留原始文件名、大小、MIME与作用域资源。ChatMessage.files和Chat的fileAction/draftFiles/removeFileAction支持文件消息及附件草稿；openAction由插件提供，可使用ExportResource保存原文件。宿主应在IO线程复制文件，避免阻塞聊天或卸载运行中的助手。旧构造器和copy桥继续保留。文件引用不授权任意路径或其它插件的数据。
