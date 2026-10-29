@@ -4,7 +4,11 @@ import kotlinx.serialization.Serializable
 
 /** A scoped resource reference. An explicit owner allows a service to show provider metadata. */
 @Serializable
-data class PluginResource(val path: String, val pluginId: String? = null)
+data class PluginResource(val path: String, val pluginId: String? = null, val monochrome: Boolean = false) {
+    // Preserve API1–32 constructors and copy/default masks used by signed packages.
+    constructor(path: String, pluginId: String? = null) : this(path, pluginId, false)
+    fun copy(path: String = this.path, pluginId: String? = this.pluginId): PluginResource = PluginResource(path, pluginId, monochrome)
+}
 
 /** Rendered by the host; plugins supply data and commands, never Compose or their own styles. */
 @Serializable

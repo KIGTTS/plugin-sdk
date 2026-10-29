@@ -1,6 +1,6 @@
 # KIGTTS Plugin SDK
 
-KIGTTS插件开发接口，采用MIT协议。API31兼容范围由接口及宿主共同校验，管理桥独立版本化。
+KIGTTS插件开发接口，采用MIT协议。API33兼容范围由接口及宿主共同校验，管理桥独立版本化。
 
 API29 增加 `AppCommand.OpenWeb`（字幕网页 / Custom Tabs）与独立的 [KPM 资源包](docs/resource-packages.md) 导入及结果回执。网页和 NFC 使用统一的官网信任与第三方提示规则；添加到快捷文本始终确认。
 
@@ -20,7 +20,7 @@ git clone https://github.com/KIGTTS/plugin-sdk.git
 
 ## API24 · 管理条目与单选
 
-`ManagementItem.badges` 提供简短类型标签，`selection = ManagementSelection(action, enabled)` 声明独立单选控件；当前选中状态仍使用 `selected`，整行点击仍使用 `primaryAction`。开关与单选保留在行尾，辅助操作由宿主放在下排，宽度不足才收入更多菜单。相邻同组条目使用连贯圆角。保留 API9–23 的构造和 copy 入口。
+`ManagementItem.badges` 提供简短类型标签，`selection = ManagementSelection(action, enabled)` 声明独立单选控件；当前选中状态仍使用 `selected`，整行点击仍使用 `primaryAction`。开关与单选保留在行尾，辅助操作由宿主放入侧滑操作区，左滑或点击更多展开，窄屏保留溢出菜单。相邻同组条目使用连贯圆角。保留 API9–23 的构造和 copy 入口。
 
 ## API25 · 商店导航与滚动加载
 
@@ -37,3 +37,7 @@ API25 展示：`SetSubtitleRenderer.presentation` 接受 `PanelPresentation(full
 ## API31 · 通用聊天文件
 
 ChatFile保留原始文件名、大小、MIME与作用域资源。ChatMessage.files和Chat的fileAction/draftFiles/removeFileAction支持文件消息及附件草稿；openAction由插件提供，可使用ExportResource保存原文件。宿主应在IO线程复制文件，避免阻塞聊天或卸载运行中的助手。旧构造器和copy桥继续保留。文件引用不授权任意路径或其它插件的数据。
+
+## API33 · 主题色 SVG
+
+`PluginResource(path, monochrome = true)` 声明随主题前景色显示的受限 SVG，源/包的 KPM 注册使用 `icon: {"image": "glyph", "monochrome": true}`。普通彩色 SVG 与位图默认保持原色，预览图不受影响。

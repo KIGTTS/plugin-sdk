@@ -222,3 +222,6 @@ PageBlock.StrokeGuide(title, instruction, points, summary, toggle, actions) 在�
 引擎可实现 `ControlledAsrEngine`，通过 `AsrControl(PREPARE/RELEASE)` 复用或释放模型；服务通过 `RecognitionBroker.control` 调用。非控制型旧引擎继续按自身方式加载。服务的空闲保留时间可设为 5–120 秒。`TtsProvider.settingsPages` 与 ASR 一样提供独立引擎配置页，宿主统一汇总正式及旧设置入口，服务负责展示。旧 TtsProvider 构造器与 copy 方法保留。
 
 打包器将收集所声明的 OkHttp/Okio 依赖，支持签名 HTTP 与 WebSocket 云端语音插件；不会把插件 SDK 合并进包。
+
+## API33 · 单色 SVG 图标
+`PluginResource(path, pluginId, monochrome = true)` 允许图标使用当前主题的矢量图标前景色。仅对受限制的 SVG 矢量生效，透明度保留，位图和预览图保持原色。省略时沿用原色，并兼容旧的透明白线图标自动染色。旧构造及 copy 桥接保留。
