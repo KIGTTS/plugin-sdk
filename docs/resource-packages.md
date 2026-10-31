@@ -1,4 +1,4 @@
-# KPM 资源包（API29 / API30）
+# KPM 资源包（API29–34）
 
 `.kigresource` 是签名 ZIP 数据包，与 `.kigplugin` / `.kiglua` 的安装生命周期独立。
 支持 QUICK_TEXT、PHOTOS、FILTER、VOICE、FRAME、STICKERS、CARD_FRAME、FONT。导入后的内容由对应功能管理，不注册插件，不创建卸载条目。
@@ -48,6 +48,20 @@ STICKERS 可以附带 `generators.json`（允许只含生成器，不含静态�
 SVG 用 `{{text}}`、`{{ink}}` 占位；文本会进行 XML 转义。字体可嵌入 TTF/OTF，随包附带许可；`<text font-family="ArtFont">` 会转换为路径，修改某张贴纸不会改动模板或其它贴纸。
 参数支持 TEXT / COLOR / NUMBER / CHOICE。NUMBER 必须提供有限的 minimum < maximum；CHOICE 提供 choices。禁止外链、脚本、事件、DOCTYPE 和外部字体。
 选中参数贴纸可点击齿轮或再次点击贴纸调整。
+
+## API34：相片信息默认值
+
+STICKERS 参数贴纸可以再附带 `photo-defaults.json`，并将该文件计入签名清单。最低 apiVersion=34：
+
+```json
+{"schemaVersion":1,"generators":{"clock":{"time":"TIME","date":"DATE","place":"LOCATION"}}}
+```
+
+`generators` 的键对应生成器 id，内层的键对应已声明的 TEXT 参数。支持 DATE、TIME、DATE_TIME、YEAR、MONTH、DAY、MONTH_EN、WEEKDAY、WEEKDAY_EN、LOCATION、WEATHER。
+
+宿主在用户将模板放入相片时读取该相片的拍摄资料，并创建独立实例；不在安装时读取相册，也不使用此刻的时间、位置冒充旧照片。没有信息时显示“未知”（英文日期字段为 Unknown），地点及天气查询复用现有用途说明、权限与超时控制。放入之后的手动修改保留，不会影响模板和其它相片。
+
+SVG 的 `<text>` 可设置 `data-fit-width="800"`，当文字过长时等比缩小到指定宽度；短文字不放大。该值必须是 1–8192 的有限数值，转换为路径后移除。
 
 ## API30：通用作品选择器
 
