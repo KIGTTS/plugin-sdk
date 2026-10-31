@@ -57,7 +57,18 @@ import kotlin.jvm.internal.DefaultConstructorMarker
 @Serializable data class PolaroidCard constructor(val id:String=UUID.randomUUID().toString(),val title:String,val description:String="",
     val imageId:String?=null,val layers:List<CardLayer> = emptyList(),val frameColor:Long=DEFAULT_POLAROID_PAPER_COLOR,
     val photoX:Double=.5,val photoY:Double=.5,val photoZoom:Double=1.0,val photoBackdrop:PhotoBackdropMode=PhotoBackdropMode.GRAY,
-    val frameStyleId:String="instax.square.classic",val originalImageId:String?=null) {
+    val frameStyleId:String="instax.square.classic",val originalImageId:String?=null,val photoStyle:PolaroidPhotoStyle?=null) {
+    constructor(id:String,title:String,description:String,imageId:String?,layers:List<CardLayer>,frameColor:Long,
+        photoX:Double,photoY:Double,photoZoom:Double,photoBackdrop:PhotoBackdropMode,frameStyleId:String,originalImageId:String?):this(
+        id,title,description,imageId,layers,frameColor,photoX,photoY,photoZoom,photoBackdrop,frameStyleId,originalImageId,null)
+    constructor(id:String?,title:String?,description:String?,imageId:String?,layers:List<CardLayer>?,frameColor:Long,
+        photoX:Double,photoY:Double,photoZoom:Double,photoBackdrop:PhotoBackdropMode?,frameStyleId:String?,originalImageId:String?,mask:Int,
+        marker:DefaultConstructorMarker?):this(if(mask and 1!=0)UUID.randomUUID().toString() else requireNotNull(id),requireNotNull(title),
+        if(mask and 4!=0)"" else requireNotNull(description),if(mask and 8!=0)null else imageId,
+        if(mask and 16!=0)emptyList() else requireNotNull(layers),if(mask and 32!=0)DEFAULT_POLAROID_PAPER_COLOR else frameColor,
+        if(mask and 64!=0).5 else photoX,if(mask and 128!=0).5 else photoY,if(mask and 256!=0)1.0 else photoZoom,
+        if(mask and 512!=0)PhotoBackdropMode.GRAY else requireNotNull(photoBackdrop),
+        if(mask and 1024!=0)"instax.square.classic" else requireNotNull(frameStyleId),if(mask and 2048!=0)null else originalImageId,null)
     constructor(id:String,title:String,description:String,imageId:String?,layers:List<CardLayer>,frameColor:Long):this(
         id,title,description,imageId,layers,frameColor,frameStyleId="classic",originalImageId=null)
     constructor(id:String,title:String,description:String,imageId:String?,layers:List<CardLayer>,frameColor:Long,
@@ -93,7 +104,20 @@ import kotlin.jvm.internal.DefaultConstructorMarker
         photoX:Double,photoY:Double,photoZoom:Double,photoBackdrop:PhotoBackdropMode,frameStyleId:String)=copy(id=id,title=title,
         description=description,imageId=imageId,layers=layers,frameColor=frameColor,photoX=photoX,photoY=photoY,photoZoom=photoZoom,
         photoBackdrop=photoBackdrop,frameStyleId=frameStyleId)
+    @JvmName("copy") fun legacyOriginalCopy(id:String,title:String,description:String,imageId:String?,layers:List<CardLayer>,frameColor:Long,
+        photoX:Double,photoY:Double,photoZoom:Double,photoBackdrop:PhotoBackdropMode,frameStyleId:String,originalImageId:String?)=copy(id=id,title=title,
+        description=description,imageId=imageId,layers=layers,frameColor=frameColor,photoX=photoX,photoY=photoY,photoZoom=photoZoom,
+        photoBackdrop=photoBackdrop,frameStyleId=frameStyleId,originalImageId=originalImageId)
     companion object {
+        @JvmStatic @JvmName("copy\$default") fun legacyOriginalCopyDefault(value:PolaroidCard,id:String?,title:String?,description:String?,
+            imageId:String?,layers:List<CardLayer>?,frameColor:Long,photoX:Double,photoY:Double,photoZoom:Double,
+            photoBackdrop:PhotoBackdropMode?,frameStyleId:String?,originalImageId:String?,mask:Int,marker:Any?):PolaroidCard=value.legacyOriginalCopy(
+            if(mask and 1!=0)value.id else requireNotNull(id),if(mask and 2!=0)value.title else requireNotNull(title),
+            if(mask and 4!=0)value.description else requireNotNull(description),if(mask and 8!=0)value.imageId else imageId,
+            if(mask and 16!=0)value.layers else requireNotNull(layers),if(mask and 32!=0)value.frameColor else frameColor,
+            if(mask and 64!=0)value.photoX else photoX,if(mask and 128!=0)value.photoY else photoY,
+            if(mask and 256!=0)value.photoZoom else photoZoom,if(mask and 512!=0)value.photoBackdrop else requireNotNull(photoBackdrop),
+            if(mask and 1024!=0)value.frameStyleId else requireNotNull(frameStyleId),if(mask and 2048!=0)value.originalImageId else originalImageId)
         @JvmStatic @JvmName("copy\$default") fun legacyCopyDefault(value:PolaroidCard,id:String?,title:String?,description:String?,
             imageId:String?,layers:List<CardLayer>?,frameColor:Long,mask:Int,marker:Any?):PolaroidCard=value.legacyCopy(
             if(mask and 1!=0)value.id else requireNotNull(id),if(mask and 2!=0)value.title else requireNotNull(title),
