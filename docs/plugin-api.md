@@ -1,6 +1,6 @@
-# 插件 API v24（兼容 v9–23）
+# 插件 API v34（兼容 v9–33）
 
-当前 SDK 为 API24，宿主接受API9–24签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API34，宿主接受 API9–34 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
 
@@ -17,7 +17,12 @@
 - `managedPackages` 仅报告源码运行时已经批准的项目版本，草稿不计入已安装依赖。
 - `sourceAction` 必须同时属于 `automationActions`。源深链接只传入未受信任的 `inputs["url"]`；宿主不自动请求网络或信任源。
 
-`PluginContext.locale` 与 `PluginEnvironment.locale` 提供当前语言标签。`PluginLocalization` 描述插件的默认/支持语言，`PluginStrings` 可读取自身 `assets/i18n/*.json` 并回退默认语言。它们是 UI 本地化接口，不改变语音模型支持的语言，也不代表所有内置文案已经翻译。
+## 界面语言
+
+默认简体中文使用 `zh-CN`，简体中文（轻松版）使用 `zh-CN-x-casual`。编写 UI 文案应以同一次 `PluginContext.locale` 为准，包含 `contributions(context)`、`page(id, context)` 与 `execute(action, context)`。声明 `PluginLocalization`，在 `attach` 中以 `PluginStrings.fromAssets` 读取包内 `assets/i18n/<tag>.json`。目录为 UTF-8 无 BOM 的平面 JSON；双版本保持相同键和占位符，例如 `{name}`。缺少某键时依次回退父标签、默认目录和调用方备用文案。无目录的旧插件继续显示原文。
+
+切换 UI 语言不改变语音模型语种、数据、路由、权限或网络区域。缓存插件 UI 时将语言加入缓存键；本地化不应重复执行用户动作。`PluginEnvironment.locale` 仅用于环境级默认值。Lua 工具可通过 `host.t(key, args, fallback)` 读取同格式文件（编辑器 0.9.3 起）。
+
 
 ## UI 扩展位置
 
