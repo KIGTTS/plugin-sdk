@@ -25,9 +25,13 @@ class PluginStrings(private val catalogs: Map<String, Map<String, String>>, priv
             add(defaultLocale)
         }.distinct()
         val pattern = candidates.firstNotNullOfOrNull { tag -> catalogs.entries.firstOrNull { it.key.equals(tag, true) }?.value?.get(key) } ?: fallback
-        return Regex("\\{([a-zA-Z][a-zA-Z0-9_.-]*)}").replace(pattern) { match -> arguments[match.groupValues[1]] ?: match.value }
+        if (arguments.isEmpty()) return pattern
+        return placeholder.replace(pattern) { match -> arguments[match.groupValues[1]] ?: match.value }
     }
     companion object {
+        // Both braces must be escaped for Android ICU, not just desktop java.util.regex.
+        private val placeholder = Regex("\\{([a-zA-Z][a-zA-Z0-9_.-]*)\\}")
+
         fun fromAssets(assets: File, defaultLocale: String = "zh-CN"): PluginStrings {
             val root = assets.canonicalFile
             val directory = File(root, "i18n").canonicalFile
