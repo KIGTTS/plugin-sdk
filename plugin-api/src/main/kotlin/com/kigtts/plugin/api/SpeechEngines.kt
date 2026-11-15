@@ -29,12 +29,33 @@ data class VoiceInfo(val id: String, val name: String, val language: String,
 @Serializable
 enum class TtsRole { PROVIDER, SERVICE }
 @Serializable
+enum class TtsProfile { REALTIME, PREBAKE }
+/** Stable, non-secret fingerprints of the provider's synthesis settings for each profile.
+ * Keep shared voice parameters in VoicePackInfo; a change here invalidates only the matching profile.
+ */
+@Serializable
+data class TtsProfileVersions(val realtime: String, val prebake: String) {
+    init { require(realtime.length in 1..128 && prebake.length in 1..128) }
+}
+@Serializable
 data class TtsInfo(val availability: EngineAvailability = EngineAvailability.READY,
     val voices: List<VoiceInfo> = emptyList(), val maxTextLength: Int = 4_000,
     val role: TtsRole = TtsRole.PROVIDER, val selectedVoiceId: String? = null,
     val importsVoicePacks: Boolean = false, val managesVoices: Boolean = false,
-    val packs: List<VoicePackInfo> = emptyList(), val supportsControl: Boolean = false) {
+    val packs: List<VoicePackInfo> = emptyList(), val supportsControl: Boolean = false,
+    val profiles: TtsProfileVersions? = null) {
     init { require(maxTextLength in 2..100_000) }
+    // Keep the JVM signatures used by API 9–34 packages, including default-argument masks.
+    constructor(availability: EngineAvailability = EngineAvailability.READY, voices: List<VoiceInfo> = emptyList(),
+        maxTextLength: Int = 4_000, role: TtsRole = TtsRole.PROVIDER, selectedVoiceId: String? = null,
+        importsVoicePacks: Boolean = false, managesVoices: Boolean = false,
+        packs: List<VoicePackInfo> = emptyList(), supportsControl: Boolean = false) :
+        this(availability, voices, maxTextLength, role, selectedVoiceId, importsVoicePacks, managesVoices, packs, supportsControl, null)
+    fun copy(availability: EngineAvailability = this.availability, voices: List<VoiceInfo> = this.voices,
+        maxTextLength: Int = this.maxTextLength, role: TtsRole = this.role, selectedVoiceId: String? = this.selectedVoiceId,
+        importsVoicePacks: Boolean = this.importsVoicePacks, managesVoices: Boolean = this.managesVoices,
+        packs: List<VoicePackInfo> = this.packs, supportsControl: Boolean = this.supportsControl) =
+        TtsInfo(availability, voices, maxTextLength, role, selectedVoiceId, importsVoicePacks, managesVoices, packs, supportsControl, profiles)
 }
 @Serializable
 data class AsrInfo(val inputFormat: AudioFormat = AudioFormat(), val batch: Boolean = true,
@@ -45,8 +66,12 @@ data class AsrInfo(val inputFormat: AudioFormat = AudioFormat(), val batch: Bool
 }
 @Serializable
 data class TtsRequest(val text: String, val language: String = "zh-CN", val rate: Float = 1f,
-    val voiceId: String? = null) {
+    val voiceId: String? = null, val profile: TtsProfile = TtsProfile.REALTIME) {
     init { require(rate.isFinite() && rate in 0.25f..4f) }
+    constructor(text: String, language: String = "zh-CN", rate: Float = 1f, voiceId: String? = null) :
+        this(text, language, rate, voiceId, TtsProfile.REALTIME)
+    fun copy(text: String = this.text, language: String = this.language, rate: Float = this.rate, voiceId: String? = this.voiceId) =
+        TtsRequest(text, language, rate, voiceId, profile)
 }
 @Serializable
 enum class EngineError { NOT_CONFIGURED, UNSUPPORTED_FORMAT, INITIALIZATION, INFERENCE, TIMEOUT, UNAVAILABLE }

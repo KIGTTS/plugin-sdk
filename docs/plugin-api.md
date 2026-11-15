@@ -1,6 +1,6 @@
 # 插件 API v34（兼容 v9–33）
 
-当前 SDK 为 API34，宿主接受 API9–34 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API35，宿主接受 API9–35 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
 
@@ -89,6 +89,7 @@ Chat 提供最多 100 条带 ID 的 USER/ASSISTANT/TOOL 消息、文字、可选
 `PcmAudio` 为帧对齐的有符号小端 PCM16，携带采样率/声道；当前规范范围 8–192 kHz、单/双声道。PCM 管道单块最大 128 KiB，具有有界背压，不将整段录音放入 Binder 事务。
 
 - TTS：`synthesize(TtsRequest): Flow<SynthesisEvent>`，Started、Audio、Finished。
+- API35 合成档位：引擎可通过 `TtsInfo.profiles = TtsProfileVersions(realtime, prebake)` 声明支持两套配置。`TtsRequest.profile` 为 `REALTIME`（默认，用户正在朗读）或 `PREBAKE`（后台预合成）。插件保存两套设置，并在每个请求中选择对应参数，不要切换全局设置来实现。两个版本字符串独立、稳定且不含密钥或原始文本；只有影响该档实际音频输出的配置改变时才改变相应版本。若同一参数影响两档，应变更两个版本或使用语音包共用参数。旧引擎不声明档位，仍收到默认请求。
 - 完整录音：`recognize(PcmAudio, RecognitionConfig): RecognitionResult`。
 - 流式识别：`recognizeStream(Flow<PcmAudio>, RecognitionConfig): Flow<RecognitionEvent>`。
 
