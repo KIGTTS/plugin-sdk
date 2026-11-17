@@ -159,6 +159,20 @@ sealed interface PageBlock {
         val historyAction: String? = null, val historyTotal: Int = 0,
         val fileAction: String? = null, val draftFiles: List<ChatFile> = emptyList(), val removeFileAction: String? = null,
         val voiceInputAction: String? = null) : PageBlock {
+        // API31–35 file-aware plugins link to both this overload and its Kotlin default bridge.
+        constructor(messages: List<ChatMessage>, sendAction: String, stopAction: String,
+            running: Boolean = false, placeholder: String = "发送消息", conversationId: String = "", controls: List<ChatControl> = emptyList(), approval: ChatApproval? = null,
+            backgroundRunning: Boolean = false, imageAction: String? = null, draftImages: List<ChatImage> = emptyList(), removeImageAction: String? = null,
+            queueAction: String? = null, steerAction: String? = null, queued: List<ChatQueuedMessage> = emptyList(), historyAction: String? = null, historyTotal: Int = 0,
+            fileAction: String? = null, draftFiles: List<ChatFile> = emptyList(), removeFileAction: String? = null)
+            : this(messages, sendAction, stopAction, running, placeholder, conversationId, controls, approval, backgroundRunning, imageAction, draftImages, removeImageAction, queueAction, steerAction, queued, historyAction, historyTotal, fileAction, draftFiles, removeFileAction, null)
+        fun copy(messages: List<ChatMessage> = this.messages, sendAction: String = this.sendAction, stopAction: String = this.stopAction,
+            running: Boolean = this.running, placeholder: String = this.placeholder, conversationId: String = this.conversationId, controls: List<ChatControl> = this.controls, approval: ChatApproval? = this.approval,
+            backgroundRunning: Boolean = this.backgroundRunning, imageAction: String? = this.imageAction, draftImages: List<ChatImage> = this.draftImages, removeImageAction: String? = this.removeImageAction,
+            queueAction: String? = this.queueAction, steerAction: String? = this.steerAction, queued: List<ChatQueuedMessage> = this.queued, historyAction: String? = this.historyAction, historyTotal: Int = this.historyTotal,
+            fileAction: String? = this.fileAction, draftFiles: List<ChatFile> = this.draftFiles, removeFileAction: String? = this.removeFileAction): Chat =
+            Chat(messages, sendAction, stopAction, running, placeholder, conversationId, controls, approval, backgroundRunning, imageAction, draftImages, removeImageAction, queueAction, steerAction, queued, historyAction, historyTotal, fileAction, draftFiles, removeFileAction, voiceInputAction)
+
         constructor(messages: List<ChatMessage>, sendAction: String, stopAction: String,
         running: Boolean = false, placeholder: String = "发送消息",
         conversationId: String = "", controls: List<ChatControl> = emptyList(), approval: ChatApproval? = null,
@@ -181,7 +195,7 @@ sealed interface PageBlock {
         fun copy(messages: List<ChatMessage> = this.messages, sendAction: String = this.sendAction, stopAction: String = this.stopAction,
             running: Boolean = this.running, placeholder: String = this.placeholder, conversationId: String = this.conversationId,
             controls: List<ChatControl> = this.controls, approval: ChatApproval? = this.approval, backgroundRunning: Boolean = this.backgroundRunning): Chat =
-            Chat(messages, sendAction, stopAction, running, placeholder, conversationId, controls, approval, backgroundRunning, imageAction, draftImages, removeImageAction, queueAction, steerAction, queued, historyAction, historyTotal, fileAction, draftFiles, removeFileAction)
+            Chat(messages, sendAction, stopAction, running, placeholder, conversationId, controls, approval, backgroundRunning, imageAction, draftImages, removeImageAction, queueAction, steerAction, queued, historyAction, historyTotal, fileAction, draftFiles, removeFileAction, voiceInputAction)
         constructor(messages: List<ChatMessage>, sendAction: String, stopAction: String, running: Boolean = false, placeholder: String = "发送消息")
             : this(messages, sendAction, stopAction, running, placeholder, "", emptyList(), null, false, null, emptyList(), null, null, null, emptyList(), null, 0, null, emptyList(), null, null)
         fun copy(messages: List<ChatMessage> = this.messages, sendAction: String = this.sendAction, stopAction: String = this.stopAction,

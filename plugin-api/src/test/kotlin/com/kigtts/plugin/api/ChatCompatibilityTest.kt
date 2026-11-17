@@ -3,6 +3,28 @@ package com.kigtts.plugin.api
 import kotlin.test.*
 
 class ChatCompatibilityTest {
+    @Test fun fileAwareChatDefaultConstructorAndCopyFromApi31StayCallable() {
+        val chatType = PageBlock.Chat::class.java
+        val marker = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
+        val s = String::class.java
+        val int = Int::class.javaPrimitiveType!!
+        val bool = Boolean::class.javaPrimitiveType!!
+        val list = List::class.java
+        val types = arrayOf(list, s, s, bool, s, s, list, ChatApproval::class.java, bool, s, list, s,
+            s, s, list, s, int, s, list, s)
+        val bridge = chatType.getConstructor(*types, int, marker)
+        val params = arrayOf<Any?>(emptyList<ChatMessage>(), "send", "stop", false, null, null, null, null, false, null,
+            null, null, null, null, null, null, 0, "attach-file", null, null)
+        val defaults = ((1 shl 20) - 1) and (7 or (1 shl 17)).inv()
+        val chat = bridge.newInstance(*params, defaults, null) as PageBlock.Chat
+        assertEquals("attach-file", chat.fileAction)
+        assertTrue(chat.draftFiles.isEmpty())
+        val current = chat.copy(voiceInputAction = "talk")
+        val oldCopy = chatType.getDeclaredMethod("copy\$default", chatType, *types, int, Any::class.java)
+        val copied = oldCopy.invoke(null, current, *params, ((1 shl 20) - 1), null) as PageBlock.Chat
+        assertEquals("attach-file", copied.fileAction)
+        assertEquals("talk", copied.voiceInputAction)
+    }
     @Test fun preOptionsBinaryConstructorAndDefaultCopyRemainCallable() {
         val types = arrayOf(String::class.java, ChatRole::class.java, String::class.java, String::class.java,
             ChatMessageState::class.java, String::class.java, String::class.java, String::class.java,
