@@ -113,3 +113,6 @@ API2/3 SenseVoice 使用官方固定模型提交 `2365baeacb507f821a0c8120fcee3d
 ## 安装器图标
 
 在 `plugin-spec.json` 注册 `"icon": {"symbol":"lightbulb"}`，使用离线 Material Symbols Rounded；或注册 `"icon": {"path":"assets/icon.svg"}`，使用包内 SVG、PNG、JPEG、WebP 图片。两者二选一，图片上限 1 MiB，必须位于 assets 且纳入 files 哈希清单与包签名。SVG 仅使用本地矢量路径/渐变，不允许脚本、外部图片/字体或外部引用；位图解码限制像素数。安装器读取图标无需加载插件代码或申请网络权限。旧包未声明 icon 时继续使用 plugin-info.json 的 symbol 或类别图标。
+### 相机表情特效资源
+
+API36 支持 `resourceType: EXPRESSION`。资源包只携带一个 `.kigexpression` 数据载荷，通过现有资源安装接口审核并添加到相机。JSON 格式版本为 1，最多 24 个特效，每款可有 1–8 个 SVG 图层。每层可指定追踪锚点、缩放、偏移、旋转及不透明度。宿主校验 SVG，使用应用内绘制，不执行包中的程序。需要兼容 API35 及更早版本时，将这一类资源放在独立商店目录。
