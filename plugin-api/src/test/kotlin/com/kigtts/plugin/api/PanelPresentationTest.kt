@@ -11,8 +11,22 @@ class PanelPresentationTest {
         assertTrue(value.copy(fadeControlsWhenIdle = true).blockHomeSideSwipes)
         val old = PanelPresentation::class.java.getConstructor(java.lang.Long::class.java, Boolean::class.javaPrimitiveType)
         assertFalse((old.newInstance(null, false) as PanelPresentation).blockHomeSideSwipes)
-        val defaults = PanelPresentation::class.java.constructors.single { it.parameterTypes.size == 4 }
+        val defaults = PanelPresentation::class.java.constructors.single {
+            it.parameterCount == 4 && it.parameterTypes.last().name.endsWith("DefaultConstructorMarker")
+        }
         assertFalse((defaults.newInstance(null, false, 3, null) as PanelPresentation).blockHomeSideSwipes)
+    }
+    @Test fun homeChromeRoundTripsAndApi37DefaultsStayCallable() {
+        val chrome = HomeChromePresentation(fadeHeaderWhenIdle = true, fadeDockWhenIdle = true)
+        val value = PanelPresentation(homeChrome = chrome)
+        assertEquals(chrome, value.copy(blockHomeSideSwipes = true).homeChrome)
+        assertEquals(value, PluginJson.decodeFromString<PanelPresentation>(PluginJson.encodeToString(value)))
+        val session = PluginOutcome.SetHomeChrome(chrome)
+        assertEquals(session, PluginJson.decodeFromString<PluginOutcome>(PluginJson.encodeToString<PluginOutcome>(session)))
+        val constructor = PanelPresentation::class.java.constructors.single {
+            it.parameterCount == 5 && it.parameterTypes.last().name.endsWith("DefaultConstructorMarker")
+        }
+        assertEquals(PanelPresentation(), constructor.newInstance(null, false, false, 7, null))
     }
     @Test fun presentationRoundTripsAndOldCopiesKeepOptions() {
         val renderer = PluginOutcome.SetSubtitleRenderer(PluginResource("led"), "index.html", PanelPresentation(0xff000000L, true))

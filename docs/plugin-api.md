@@ -1,8 +1,15 @@
-# 插件 API37（兼容 API9–36）
+# 插件 API38（兼容 API9–37）
 
-当前 SDK 为 API37，宿主接受 API9–37 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API38，宿主接受 API9–38 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
+
+## API38 首页栏位闲置淡化
+
+`HomeChromePresentation(fadeHeaderWhenIdle = true, fadeDockWhenIdle = true)` 分别控制主界面的顶栏和快捷文本底栏（含横屏侧栏），两项默认关闭。栏位闲置后降低不透明度，触摸或键盘操作立即唤醒，保留栏位布局和首击响应。宿主遵循系统无障碍超时及减弱动态设置，在编辑、语音输入和快捷文本面板展开时保持全亮。
+
+- 字幕渲染器可通过 `PanelPresentation(homeChrome = ...)` 让淡化随渲染器启停。
+- 其它插件可返回 `PluginOutcome.SetHomeChrome(presentation)`，在当前宿主会话中单独控制首页栏位。传 `null` 清除本插件的请求，停用插件也会清除。多个插件分别请求时，每个栏位只需有一个有效请求就会启用淡化。
 
 ## API37 原生字幕与外观
 

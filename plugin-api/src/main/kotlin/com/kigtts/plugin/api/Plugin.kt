@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 37
+const val PLUGIN_API_VERSION = 38
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -98,6 +98,9 @@ sealed interface PluginOutcome {
     /** Applies the listed fields to saved appearance after the host confirms with the user. */
     @Serializable
     data class ChangeSavedAppearance(val appearance: AppearancePatch) : PluginOutcome
+    /** Session-only Home chrome request, independent of the subtitle renderer. Null clears this caller's request. */
+    @Serializable
+    data class SetHomeChrome(val presentation: HomeChromePresentation? = null) : PluginOutcome
     /** Session-only secondary panel owned by this plugin. Null restores this owner's native panel.
      * pageId resolves through page(); Browser and native blocks share normal permissions/actions.
      * replaceContent=false overlays the original captions. replaceControls filters bottom slots
