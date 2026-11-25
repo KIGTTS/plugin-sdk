@@ -1,8 +1,18 @@
-# 插件 API v34（兼容 v9–33）
+# 插件 API37（兼容 API9–36）
 
-当前 SDK 为 API36，宿主接受 API9–36 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
+当前 SDK 为 API37，宿主接受 API9–37 签名包。助手0.9.13、商店0.10.0及独立界面调试0.1.0需要API14；旧兼容服务保留配置与模型。API8及更早的DEX包需由同一发布者重新构建并递增versionCode。专用包、签名、资源归属及安装规则见 [插件包](plugin-packages.md)。
 
 插件实现 `KigPlugin`，提供 `PluginDescriptor`、可选语音引擎/资源管理器、`PluginContributions` 和页面。外置原生代码在独立工作进程运行，宿主通过规范代理传输数据并渲染 UI；插件不持有宿主 Activity、View 或 Compose 实例。`attach` 提供专属资源环境，`close` 在会话取消并结束后释放资源。
+
+## API37 原生字幕与外观
+
+`PluginOutcome.SetNativeSubtitleRenderer` 接收 `NativeSubtitleRenderer.Led` 数据和可选的 `PanelPresentation`。宿主用原生 Canvas 绘制并保留原文、编辑、缩放、全屏和快捷文本手势。`renderer = null` 关闭调用插件的显示；`collapseQuickText` 仅在首次选中当前渲染器时收起面板，修改样式时可在同一结果中附带新的 `controls`。渲染器的 `appearance` 只作用于显示期间的首页，切到其它页面会恢复对应页面的设置。
+
+- **临时覆盖** `PluginOutcome.SetTemporaryAppearance(AppearancePatch(...))` 在触发动作的页面生效，不重建页面或写入永久配置。返回或离开时恢复，再进入页面需重新请求。传 `null` 可清除本插件的覆盖。
+- **常驻修改** `PluginOutcome.ChangeSavedAppearance(AppearancePatch(...))` 由宿主弹窗询问用户。同意后只修改请求中列出的字段，并保存到软件外观设置。
+- `AppearancePatch` 各字段可独立省略。可设置 ARGB 主题色、跟随系统／亮色／暗色、背景图、0 到 1 的遮罩深度、纯黑深色模式和三档对比度。背景使用调用插件的 `PluginResource`，通过宿主图片导入器验证；`AppearanceBackground.Clear` 移除背景。只切暗色时沿用用户取色设置。
+
+API36 及更早的 HTML 字幕渲染结果继续可用。
 
 ## 能力与宿主操作
 

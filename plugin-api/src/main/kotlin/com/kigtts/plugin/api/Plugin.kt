@@ -2,7 +2,7 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 36
+const val PLUGIN_API_VERSION = 37
 const val MIN_PLUGIN_API_VERSION = 9
 
 @Serializable
@@ -83,6 +83,21 @@ sealed interface PluginOutcome {
         constructor(root: PluginResource? = null, mainPage: String = "index.html") : this(root, mainPage, PanelPresentation())
         fun copy(root: PluginResource? = this.root, mainPage: String = this.mainPage): SetSubtitleRenderer = SetSubtitleRenderer(root, mainPage, presentation)
     }
+    /** Null disables this caller's renderer. Appearance applies only on Home while selected. */
+    @Serializable
+    data class SetNativeSubtitleRenderer(
+        val renderer: NativeSubtitleRenderer? = null,
+        val presentation: PanelPresentation = PanelPresentation(),
+        val appearance: AppearancePatch? = null,
+        val collapseQuickText: Boolean = false,
+        val controls: Controls? = null,
+    ) : PluginOutcome
+    /** Replaces the caller's in-memory override on the invoking page. Null clears it. */
+    @Serializable
+    data class SetTemporaryAppearance(val appearance: AppearancePatch? = null) : PluginOutcome
+    /** Applies the listed fields to saved appearance after the host confirms with the user. */
+    @Serializable
+    data class ChangeSavedAppearance(val appearance: AppearancePatch) : PluginOutcome
     /** Session-only secondary panel owned by this plugin. Null restores this owner's native panel.
      * pageId resolves through page(); Browser and native blocks share normal permissions/actions.
      * replaceContent=false overlays the original captions. replaceControls filters bottom slots
