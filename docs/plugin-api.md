@@ -6,7 +6,7 @@
 
 ## API38 首页栏位闲置淡化
 
-`HomeChromePresentation(fadeHeaderWhenIdle = true, fadeDockWhenIdle = true)` 分别控制主界面的顶栏和快捷文本底栏（含横屏侧栏），两项默认关闭。栏位闲置后降低不透明度，触摸或键盘操作立即唤醒，保留栏位布局和首击响应。宿主遵循系统无障碍超时及减弱动态设置，在编辑、语音输入和快捷文本面板展开时保持全亮。
+`HomeChromePresentation(fadeHeaderWhenIdle = true, fadeDockWhenIdle = true)` 分别控制主界面的顶栏和快捷文本底栏（含横屏侧栏），两项默认关闭。栏位闲置后降低不透明度，触摸或键盘操作立即唤醒，保留栏位布局和首击响应。开启顶栏淡化时，系统状态栏也会在闲置后隐藏，唤醒时恢复，首页仍保留同一安全区。宿主遵循系统无障碍超时及减弱动态设置，在编辑、语音输入和快捷文本面板展开时保持全亮。
 
 - 字幕渲染器可通过 `PanelPresentation(homeChrome = ...)` 让淡化随渲染器启停。
 - 其它插件可返回 `PluginOutcome.SetHomeChrome(presentation)`，在当前宿主会话中单独控制首页栏位。传 `null` 清除本插件的请求，停用插件也会清除。多个插件分别请求时，每个栏位只需有一个有效请求就会启用淡化。
