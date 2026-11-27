@@ -10,7 +10,9 @@ class PluginRegistryTest {
     }
     @Test fun rejectsDuplicateAndIncompatiblePlugins() {
         assertFailsWith<IllegalArgumentException> { PluginRegistry(listOf(plugin("test.a"), plugin("test.a"))) }
-        assertFailsWith<IllegalArgumentException> { PluginRegistry(listOf(plugin("test.a", api = 1))) }
+        assertFailsWith<IllegalArgumentException> { PluginRegistry(listOf(plugin("test.a", api = 2))) }
+        assertEquals(1, PluginRegistry(listOf(plugin("test.a", api = 1))).plugins.single().descriptor.apiVersion)
+        assertEquals(38, PluginRegistry(listOf(plugin("test.a", api = 38))).plugins.single().descriptor.apiVersion)
     }
     @Test fun actionsRemainNamespacedAndDeterministicallyOrdered() {
         val registry = PluginRegistry(listOf(
