@@ -2,8 +2,20 @@ package com.kigtts.plugin.api
 
 import kotlinx.serialization.Serializable
 
-const val PLUGIN_API_VERSION = 38
-const val MIN_PLUGIN_API_VERSION = 9
+const val PLUGIN_API_VERSION = 1
+const val MIN_PLUGIN_API_VERSION = 1
+const val LAST_PREVIEW_PLUGIN_API = 38
+
+/** 1.0 retains the preview ABI so already installed, signed plugins can be upgraded in place. */
+fun supportsPluginApi(version: Int): Boolean =
+    version in MIN_PLUGIN_API_VERSION..PLUGIN_API_VERSION || version in 9..LAST_PREVIEW_PLUGIN_API
+
+/** Resource manifests emitted by the preview used the host API counter, starting at 29. */
+fun supportsResourceApi(version: Int): Boolean =
+    version in MIN_PLUGIN_API_VERSION..PLUGIN_API_VERSION || version in 29..LAST_PREVIEW_PLUGIN_API
+
+fun resourceApiIncludes(version: Int, previewIntroducedAt: Int): Boolean =
+    version in MIN_PLUGIN_API_VERSION..PLUGIN_API_VERSION || version in previewIntroducedAt..LAST_PREVIEW_PLUGIN_API
 
 @Serializable
 enum class PluginRequirement { RECOGNITION_SERVICE }
@@ -13,7 +25,7 @@ data class PluginDescriptor(
     val id: String,
     val name: String,
     val description: String,
-    val version: String = "0.1.0",
+    val version: String = "1.0.0",
     val apiVersion: Int = PLUGIN_API_VERSION,
     val placeholder: Boolean = false,
     val license: String = "MIT",

@@ -15,7 +15,7 @@ class PluginRegistry(plugins: List<KigPlugin>) {
         require(next.map { it.descriptor.id }.distinct().size == next.size) { "Duplicate plugin ID" }
         next.forEach { plugin ->
             require(plugin.descriptor.id.matches(Regex("[a-z][a-z0-9.-]+"))) { "Invalid plugin ID" }
-            require(plugin.descriptor.apiVersion in MIN_PLUGIN_API_VERSION..PLUGIN_API_VERSION) { "Incompatible plugin API" }
+            require(supportsPluginApi(plugin.descriptor.apiVersion)) { "Incompatible plugin API" }
             val actions = plugin.contributions.actions
             require(actions.map { it.id }.distinct().size == actions.size) { "Duplicate action ID" }
             require(actions.all { it.id.isNotBlank() && it.label.isNotBlank() })
